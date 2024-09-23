@@ -30,6 +30,7 @@ waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "streamlit run main.py"]
+deploymentTarget = "cloudrun"
 
 [[ports]]
 localPort = 5000

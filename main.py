@@ -3,6 +3,7 @@ from document_processor import process_documents
 from rag_pipeline import RAGPipeline
 from chat_bot import ChatBot
 import os
+
 # Initialize session state
 if 'rag_pipeline' not in st.session_state:
     st.session_state.rag_pipeline = None
@@ -10,8 +11,10 @@ if 'chat_bot' not in st.session_state:
     st.session_state.chat_bot = None
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
+
 def main():
     st.title("Hospital Policy Chat Bot")
+
     # Document processing section
     st.header("Document Processing")
 
@@ -72,5 +75,6 @@ def main():
                 st.text_area("Bot:", value=message, height=100, disabled=True)
     else:
         st.warning("Please process documents before starting the chat.")
+
 if __name__ == "__main__":
     main()

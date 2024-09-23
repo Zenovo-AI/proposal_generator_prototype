@@ -1,3 +1,5 @@
+pdfplumber
 streamlit
-transformers
-torch
+requests  # Example additional dependency
+beautifulsoup4  # Added BeautifulSoup
+trafilatura  # Added Trafilatura
