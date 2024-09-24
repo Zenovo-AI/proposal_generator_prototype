@@ -9,4 +9,5 @@ torch
 transformers
 pydantic
 orjson
-langchain-community  # Added langchain-community
+langchain-community 
+sentence-transformers

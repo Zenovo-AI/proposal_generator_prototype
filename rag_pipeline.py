@@ -1,13 +1,26 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+from pydantic import BaseModel
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 import nltk
 from nltk.tokenize import sent_tokenize
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # Download the punkt tokenizer for sentence splitting
 nltk.download('punkt', quiet=True)
 
-class RAGPipeline:
+class DocumentConfig(BaseModel):
+    model_name: str
+    content: str
+
+    class Config:
+        protected_namespaces = ()
+
+class RAGPipeline(BaseModel):
+    documents: list[DocumentConfig]
+
+    class Config:
+        protected_namespaces = ()
+
     def __init__(self, documents):
         self.documents = documents
         self.text_splitter = self._create_text_splitter()
@@ -29,11 +42,11 @@ class RAGPipeline:
         texts = []
         metadatas = []
         for doc in self.documents:
-            sentences = self._split_into_sentences(doc["content"])
+            sentences = self._split_into_sentences(doc.content)
             chunks = self.text_splitter.create_documents(sentences)
             texts.extend([chunk.page_content for chunk in chunks])
-            metadatas.extend([{"source": doc["source"]} for _ in chunks])
-        
+            metadatas.extend([{"source": doc.model_name} for _ in chunks])
+
         return FAISS.from_texts(texts, self.embeddings, metadatas=metadatas)
 
     def query(self, question, k=3):
