@@ -16,6 +16,17 @@ if 'chat_bot' not in st.session_state:
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
+def process_single_document(file_path):
+    # Process a single document given its file path
+    documents = process_documents([open(file_path, 'rb')], None)
+    if documents:
+        print("Processed Documents (single file):", documents)
+        st.session_state.rag_pipeline = RAGPipeline(documents)
+        st.session_state.chat_bot = ChatBot(st.session_state.rag_pipeline)
+    else:
+        st.error("Failed to process document")
+    st.success("Document processed successfully!")
+
 def main():
     st.title("Hospital Policy Chat Bot")
 
@@ -29,14 +40,7 @@ def main():
         # Automatically process the single file
         with st.spinner("Processing single document automatically..."):
             file_path = os.path.join('uploaded_files', existing_files[0])
-            documents = process_documents([open(file_path, 'rb')], None)
-            if documents:
-                print("Processed Documents (single file):", documents)
-                st.session_state.rag_pipeline = RAGPipeline(documents)
-                st.session_state.chat_bot = ChatBot(st.session_state.rag_pipeline)
-            else:
-                st.error("Failed to process document")
-            st.success("Document processed successfully!")
+            process_single_document(file_path)
 
     else:
         # User can choose to use existing documents or upload new ones
@@ -47,14 +51,9 @@ def main():
                 with st.spinner("Processing documents..."):
                     for selected_file in selected_files:
                         st.write(f"Processing file: {selected_file}")
+                        file_path = os.path.join('uploaded_files', selected_file)
                         try:
-                            documents = process_documents([open(os.path.join('uploaded_files', selected_file), 'rb')], None)
-                            if documents:
-                                print(f"Processed Documents (file: {selected_file}):", documents)
-                                st.session_state.rag_pipeline = RAGPipeline(documents)
-                                st.session_state.chat_bot = ChatBot(st.session_state.rag_pipeline)
-                            else:
-                                st.error(f"Failed to process document: {selected_file}")
+                            process_single_document(file_path)
                         except Exception as e:
                             st.error(f"Error processing document: {selected_file}, Error: {e}")
                 st.success("Documents processed successfully!")
@@ -64,8 +63,12 @@ def main():
             uploaded_files = st.file_uploader("Upload PDF or TXT documents", type=["pdf", "txt"], accept_multiple_files=True)
             web_url = st.text_input("Enter URL of policy webpage")
 
-            if uploaded_files or web_url:
-                with st.spinner("Processing documents..."):
+            # Debugging: Check if files are being uploaded
+            if uploaded_files:
+                st.write(f"Uploaded files: {[file.name for file in uploaded_files]}")
+
+                # Automatically process uploaded files
+                with st.spinner("Processing uploaded documents..."):
                     try:
                         documents = process_documents(uploaded_files, web_url)
                         if documents:
