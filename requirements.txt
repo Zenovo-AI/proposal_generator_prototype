@@ -11,3 +11,4 @@ pydantic
 orjson
 langchain-community 
 sentence-transformers
+cryptography==38.0.4  # Pin to a stable version

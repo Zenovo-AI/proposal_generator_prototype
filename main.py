@@ -3,6 +3,10 @@ import streamlit as st
 from document_processor import process_documents
 from rag_pipeline import RAGPipeline
 from chat_bot import ChatBot
+import cryptography
+
+# Print the version of the cryptography package
+st.write(f"Cryptography version: {cryptography.__version__}")
 
 # Ensure `uploaded_files` directory exists
 if not os.path.exists('uploaded_files'):

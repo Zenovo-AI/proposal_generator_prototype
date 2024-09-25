@@ -1,5 +1,7 @@
 { pkgs }: {
   deps = [
+    pkgs.libiconv
+    pkgs.libxcrypt
     pkgs.streamlit
     pkgs.openssh
     pkgs.bash
