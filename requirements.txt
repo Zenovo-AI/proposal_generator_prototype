@@ -1,5 +1,5 @@
-pdfplumber
-streamlit
+pdfplumber==0.11.0
+streamlit==1.34.0
 requests
 beautifulsoup4
 trafilatura
@@ -9,6 +9,6 @@ torch
 transformers
 pydantic
 orjson
-langchain-community 
+langchain-community
 sentence-transformers
-cryptography==38.0.4  # Pin to a stable version
+cryptography<42.0

@@ -7,6 +7,7 @@ import cryptography
 
 # Print the version of the cryptography package
 st.write(f"Cryptography version: {cryptography.__version__}")
+print(f"Cryptography version: {cryptography.__version__}")  # This line is to also ensure it prints to the console
 
 # Ensure `uploaded_files` directory exists
 if not os.path.exists('uploaded_files'):
