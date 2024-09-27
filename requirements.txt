@@ -1,14 +1,15 @@
 pdfplumber==0.11.0
 streamlit==1.34.0
-requests
-beautifulsoup4
-trafilatura
-langchain
-nltk
-torch
-transformers
-pydantic
-orjson
-langchain-community
-sentence-transformers
-cryptography<42.0
+requests==2.31.0
+beautifulsoup4==4.12.2
+trafilatura==1.12.2
+langchain==0.0.148
+nltk==3.8.1
+torch==2.4.1
+transformers==4.30.0
+pydantic==1.10.12
+orjson==3.10.6
+langchain-community==0.0.6
+sentence-transformers==2.2.2
+cryptography==41.0.3
+tokenizers==0.11.6  # Version with pre-built wheel
