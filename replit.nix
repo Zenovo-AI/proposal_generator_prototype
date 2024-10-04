@@ -1,5 +1,12 @@
 { pkgs }: {
   deps = [
+    pkgs.bash
+    pkgs.rustc
+    pkgs.pkg-config
+    pkgs.openssl
+    pkgs.libxcrypt
+    pkgs.libiconv
+    pkgs.cargo
     pkgs.nvidia-docker
     pkgs.docker
     pkgs.python39Packages.streamlit
