@@ -163,3 +163,4 @@ cython_debug/
 
 # Add this line
 uploaded_files/
+data/
