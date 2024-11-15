@@ -1,21 +1,14 @@
-import numpy as np
-import concurrent.futures
 import os
+import concurrent.futures
 from dotenv import load_dotenv
-import structlog
-from pydantic import BaseModel
 from abc import ABC, abstractmethod
-import re
-import openai
-import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
-import faiss
-from langchain_community.vectorstores import FAISS
+from pydantic import BaseModel
+import structlog
 from langchain_openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from langchain_openai import ChatOpenAI
-from document_processor import SECTION_KEYWORDS
+from document_processor import DocumentProcessor
 
 # Load environment variables
 load_dotenv()
@@ -28,14 +21,17 @@ logger = get_logger(__name__)
 
 # API Key retrieval
 api_key = os.getenv("OPENAI_API_KEY")
+process_document = DocumentProcessor()
 
 
+# Base class for prompt templates
 class BasePromptTemplate(ABC, BaseModel):
     @abstractmethod
     def create_template(self, *args) -> PromptTemplate:
         pass
 
 
+# Query Expansion Template
 class QueryExpansionTemplate(BasePromptTemplate):
     prompt: str = """You are an AI language model assistant. Your task is to generate {to_expand_to_n}
     different versions of the given user question to retrieve relevant documents from a vector
@@ -59,16 +55,26 @@ class QueryExpansionTemplate(BasePromptTemplate):
         return "#next-question#"
 
 
+# Self Query Template
 class SelfQueryTemplate(BasePromptTemplate):
     prompt: str = """You are an AI language model assistant. Your task is to extract information from a user question.
-    The required information that needs to be extracted is the user or author id. 
-    Your response should consist of only the extracted id (e.g. 1345256), nothing else.
+    The required information to be extracted includes:
+    Intent: The user's goal or purpose
+    Entities: Specific objects, people, or locations mentioned
+    Context: Relevant background information
+    Keywords: Important words or phrases
+    Your response should consist of these extracted details in the following format:
+    Intent: {intent}
+    Entities: {entities}
+    Context: {context}
+    Keywords: {keywords}
     User question: {question}"""
 
     def create_template(self) -> PromptTemplate:
         return PromptTemplate(template=self.prompt, input_variables=["question"])
 
 
+# Reranking Template
 class RerankingTemplate(BasePromptTemplate):
     prompt: str = """You are an AI language model assistant. Your task is to rerank passages related to a query
     based on their relevance. 
@@ -94,160 +100,145 @@ class RerankingTemplate(BasePromptTemplate):
         return "\n#next-document#\n"
 
 
+# General Chain Class
 class GeneralChain:
     @staticmethod
     def get_chain(llm, template: PromptTemplate, output_key: str, verbose=True):
         return LLMChain(
             llm=llm, prompt=template, output_key=output_key, verbose=verbose
         )
-        
 
-# Chunking logic (as provided)
-def _split_sentences(text):
-    sentences = re.split(r'(?<=[.?!])\s+', text)
-    return sentences
 
-def _combine_sentences(sentences):
-    combined_sentences = []
-    for i in range(len(sentences)):
-        combined_sentence = sentences[i]
-        if i > 0:
-            combined_sentence = sentences[i-1] + ' ' + combined_sentence
-        if i < len(sentences) - 1:
-            combined_sentence += ' ' + sentences[i+1]
-        combined_sentences.append(combined_sentence)
-    return combined_sentences
-
-def create_faiss_index(embeddings):
-    """
-    Create a FAISS index from the given embeddings.
-    
-    Args:
-    embeddings (numpy.array): The embeddings to index.
-    
-    Returns:
-    faiss.Index: The created FAISS index.
-    """
-    index = faiss.IndexFlatL2(embeddings.shape[1])
-    index.add(embeddings)
-    return index
-
-def convert_to_vector(texts):
-
-    # Try to generate embeddings for a list of texts using a pre-trained model and handle any exceptions.
-    try:
-        response = openai.embeddings.create(
-            input=texts,
-            model="text-embedding-3-small"
+# Query Expansion Class
+class QueryExpansion:
+    @staticmethod
+    def generate_response(query: str, to_expand_to_n: int, api_key: str) -> list[str]:
+        query_expansion_template = QueryExpansionTemplate()
+        prompt_template = query_expansion_template.create_template(to_expand_to_n)
+        model = ChatOpenAI(
+            model="gpt-4-1106-preview",
+            api_key=api_key,
+            temperature=0,
         )
-        embeddings = np.array([item.embedding for item in response.data])
-        return embeddings
-    except Exception as e:
-        print("An error occurred:", e)
-        return np.array([])
 
-# def convert_to_vector(texts):
-#     try:
-#         response = openai.embeddings.create(
-#             input=texts,
-#             model="text-embedding-3-small"
-#         )
-#         embeddings = np.array([item.embedding for item in response.data])
-#         return embeddings
-#     except Exception as e:
-#         print("An error occurred:", e)
-#         return np.array([])
+        chain = GeneralChain().get_chain(
+            llm=model, output_key="expanded_queries", template=prompt_template
+        )
 
-def _calculate_cosine_distances(embeddings):
-    distances = []
-    for i in range(len(embeddings) - 1):
-        similarity = cosine_similarity([embeddings[i]], [embeddings[i + 1]])[0][0]
-        distance = 1 - similarity
-        distances.append(distance)
-    return distances
+        response = chain.invoke({"question": query})
+        result = response["expanded_queries"]
+
+        queries = result.strip().split(query_expansion_template.separator)
+        stripped_queries = [
+            stripped_item for item in queries if (stripped_item := item.strip())
+        ]
+
+        return stripped_queries
 
 
+
+
+# Self Query Class
+class SelfQuery:
+    @staticmethod
+    def generate_response(query: str, api_key: str) -> str:
+        prompt = SelfQueryTemplate().create_template()
+        model = ChatOpenAI(
+            model="gpt-4-1106-preview",
+            api_key=api_key,
+            temperature=0,
+        )
+
+        chain = GeneralChain().get_chain(
+            llm=model, output_key="metadata_filter_value", template=prompt
+        )
+
+        response = chain.invoke({"question": query})
+        result = response["metadata_filter_value"]
+
+        return result
+
+
+# Reranker Class
+class Reranker:
+    @staticmethod
+    def generate_response(
+        query: str, passages: list[str], keep_top_k: int, api_key: str
+    ) -> list[str]:
+        reranking_template = RerankingTemplate()
+        prompt_template = reranking_template.create_template(keep_top_k=keep_top_k)
+
+        model = ChatOpenAI(
+            model="gpt-4-1106-preview",
+            api_key=api_key,
+            temperature=0,
+        )
+        chain = GeneralChain().get_chain(
+            llm=model, output_key="rerank", template=prompt_template
+        )
+
+        stripped_passages = [
+            stripped_item for item in passages if (stripped_item := item.strip())
+        ]
+        passages = reranking_template.separator.join(stripped_passages)
+        response = chain.invoke({"question": query, "passages": passages})
+
+        result = response["rerank"]
+        reranked_passages = result.strip().split(reranking_template.separator)
+        stripped_passages = [
+            stripped_item
+            for item in reranked_passages
+            if (stripped_item := item.strip())
+        ]
+
+        return stripped_passages
+
+
+# RAG Pipeline Class
 class RAGPipeline:
-    def __init__(self, documents: list, api_key: str, k: int = 5, to_expand_to_n_queries: int = 3, keep_top_k: int = 1):
-        """
-        Initialize the RAG pipeline.
-
-        Args:
-        documents (list): List of documents.
-        api_key (str): OpenAI API key.
-        k (int): Number of top results to retrieve.
-        to_expand_to_n_queries (int): Number of queries to expand to.
-        keep_top_k (int): Number of top results to keep.
-        """
+    def __init__(self, faiss_index, document_embeddings, documents, api_key, 
+                 k=5, to_expand_to_n_queries=3, keep_top_k=1):
+        self.faiss_index = faiss_index
+        self.document_embeddings = document_embeddings
         self.documents = documents
         self.api_key = api_key
         self.k = k
         self.to_expand_to_n_queries = to_expand_to_n_queries
         self.keep_top_k = keep_top_k
+        self._query_expander = QueryExpansion()
+        self._metadata_extractor = SelfQuery()
+        self._reranker = Reranker()
         self._embedder = OpenAIEmbeddings(api_key=api_key)
-        self._query_expander = QueryExpansionTemplate()
-        self._reranker = RerankingTemplate()
-        # self.faiss_index = self._create_faiss_index(documents)
+        # Initialize the executor for asynchronous task submission
+        self._executor = concurrent.futures.ThreadPoolExecutor()
 
-    def chunk_text(documents):
-        single_sentences_list = _split_sentences(documents)
-        combined_sentences = _combine_sentences(single_sentences_list)
-        embeddings = convert_to_vector(combined_sentences)
-        distances = _calculate_cosine_distances(embeddings)
-        breakpoint_percentile_threshold = 80
-        breakpoint_distance_threshold = np.percentile(distances, breakpoint_percentile_threshold)
-        indices_above_thresh = [i for i, distance in enumerate(distances) if distance > breakpoint_distance_threshold]
-        chunks = []
-        start_index = 0
-        for index in indices_above_thresh:
-            chunk = ' '.join(single_sentences_list[start_index:index+1])
-            chunks.append(chunk)
-            start_index = index + 1
-            if start_index < len(single_sentences_list):
-                chunk = ' '.join(single_sentences_list[start_index:])
-                chunks.append(chunk)
-                return chunks
-
-    def retrieve_top_k(self, query: str) -> list:
-        """
-        Retrieve the top-k relevant documents using the expanded queries.
-
-        Args:
-        query (str): The query to retrieve documents for.
-
-        Returns:
-        list: The top-k relevant documents.
-        """
+    def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int, api_key: str, include_metadata: bool) -> list:
+        self.query = query
+        
         # Generate expanded queries
-        expanded_queries = self._query_expander.expand_query(query, self.to_expand_to_n_queries)
+        generated_queries = self._query_expander.generate_response(
+            query=self.query,
+            to_expand_to_n=to_expand_to_n_queries,
+            api_key=api_key
+        )
+        
+        # Process each expanded query
+        search_tasks = []
+        for query in generated_queries:
+            # Ensure include_metadata is passed in the search task
+            search_tasks.append(self._executor.submit(self._search_single_query, query, api_key, include_metadata))
 
-        # Concurrent search for each query
-        hits = []
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            search_tasks = [
-                executor.submit(self._search_single_query, expanded_query) for expanded_query in expanded_queries
-            ]
-            hits = [task.result() for task in concurrent.futures.as_completed(search_tasks)]
-
-        # Flatten the results from the different queries
-        hits = [item for sublist in hits for item in sublist]
-
+        # Collect search results
+        hits = [task.result() for task in concurrent.futures.as_completed(search_tasks)]
         return hits
 
-    def _search_single_query(self, query: str) -> list:
-        """
-        Search the FAISS index for a single query.
 
-        Args:
-        query (str): The query to search for.
-
-        Returns:
-        list: The search results.
-        """
-        query_vector = self._embedder.embed_query(query)
+    def _search_single_query(self, query: str, api_key: str) -> list:
+        # Debugging: print the arguments
+        print(f"Debug: _search_single_query called with query={query} and api_key={api_key}")
+        
+        query_vector = self._embedder.embed_query(query)  # Embed query here
         D, I = self.faiss_index.search(query_vector, self.k)
-
-        # D: distances, I: indices
         results = []
         for idx in I[0]:
             if idx != -1:
@@ -256,26 +247,14 @@ class RAGPipeline:
                     "text": doc,
                     "source": "Unknown source",
                 })
-
         return results
 
+
+
     def rerank(self, hits: list, query: str) -> str:
-        """
-        Rerank the retrieved documents and return the best answer with its source.
-
-        Args:
-        hits (list): The retrieved documents.
-
-        Returns:
-        str: The best answer and its source.
-        """
-        # Extract the 'text' field from each hit
         content_list = [hit['text'] for hit in hits]
-
-        # Generate reranking based on the retrieved documents
         reranking_template = self._reranker.create_template(self.keep_top_k)
         prompt_template = reranking_template
-
         model = ChatOpenAI(
             model="gpt-4-1106-preview",
             api_key=self.api_key,
@@ -286,7 +265,6 @@ class RAGPipeline:
             llm=model, output_key="rerank", template=prompt_template
         )
 
-        # Prepare passages for reranking
         passages = reranking_template.separator.join([item.strip() for item in content_list if item.strip()])
         response = chain.invoke({"question": query, "passages": passages})
 
@@ -294,185 +272,22 @@ class RAGPipeline:
         reranked_passages = result.strip().split(reranking_template.separator)
         reranked_passages = [item.strip() for item in reranked_passages if item.strip()]
 
-        # Return the best ranked passage and its source(s)
         if reranked_passages:
             best_answer = reranked_passages[0]
-            best_answer_source = "Unknown source"  
+            best_answer_source = "Unknown source"
             logger.info(f"Best answer selected: {best_answer}, Source: {best_answer_source}")
             return best_answer, best_answer_source
         else:
             return "", "No source found"
 
-    def run_pipeline(self, query: str) -> dict:
-        """
-        Run the RAG pipeline for the given query.
-
-        Args:
-        query (str): The query to run the pipeline for.
-
-        Returns:
-        dict: The best answer and its source.
-        """
-        # Retrieve the top-k relevant documents using the expanded queries
-        hits = self.retrieve_top_k(query)
-
-        # Rerank the retrieved documents and return the best answer with its source
-        best_answer, best_answer_source = self.rerank(hits)
-
+    def run_pipeline(self, query: str, api_key: str, include_metadata: bool) -> dict:
+        hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries, api_key=api_key, include_metadata=include_metadata)
+        best_answer, best_answer_source = self.rerank(hits, query)
         return {"answer": best_answer, "source": best_answer_source}
 
-    def set_documents(self, documents: list):
-        """
-        Set the documents for the pipeline.
 
-        Args:
-        documents (list): The list of documents.
-        """
-        self.documents = documents
-        self.faiss_index = self._create_faiss_index(documents)
-
-    def set_query_expander(self, query_expander: QueryExpansionTemplate):
-        """
-        Set the query expander for the pipeline.
-
-        Args:
-        query_expander (QueryExpansionTemplate): The query expander.
-        """
-        self._query_expander = query_expander
-
-    def set_reranker(self, reranker: RerankingTemplate):
-        """
-        Set the reranker for the pipeline.
-
-        Args:
-        reranker (RerankingTemplate): The reranker.
-        """
-        self._reranker = reranker
-        
     def identify_section(self, question):
-        """
-        Identify section based on keywords in the question for targeted retrieval.
-        Returns the matching section name or None.
-        """
-        for section, keywords in SECTION_KEYWORDS.items():
-            if any(keyword.lower() in question.lower() for keyword in keywords):
+        for section, keywords in process_document.section_keywords.items():
+            if any(keyword in question.lower() for keyword in keywords):
                 return section
-        return None
-
-
-
-# class RAGPipeline(BaseModel):
-#     documents: Optional[List[Dict[str, str]]] = Field(default=None)  # Allow documents as dictionaries
-    
-#     def __init__(self, documents=None, **data):
-#         super().__init__(documents=documents, **data)
-#         self.query_expander = QueryExpansion()
-#         self.reranker = Reranker()
-#         self.self_query_processor = SelfQueryProcessor()
-        
-#         self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-#         self.faiss_index = None
-        
-#         if self.documents:
-#             self.build_index(self.documents)
-    
-#     def build_index(self, documents: List[Dict[str, str]]):
-#         # Extract text content and create embeddings
-#         texts = [doc['text'] for doc in documents if 'text' in doc]
-#         embeddings = [self.embedding_model.embed(text) for text in texts]
-#         self.faiss_index = FAISS.from_embeddings(embeddings, texts)
-
-#     def query(self, question: str, top_k: int = 5) -> List[str]:
-#         if not self.faiss_index:
-#             return []
-        
-#         question_embedding = self.embedding_model.embed(question)
-#         relevant_docs = self.faiss_index.similarity_search_by_vector(question_embedding, k=top_k)
-        
-#         return relevant_docs
-
-#     def identify_section(self, question):
-#         """
-#         Identify section based on keywords in the question for targeted retrieval.
-#         Returns the matching section name or None.
-#         """
-#         for section, keywords in SECTION_KEYWORDS.items():
-#             if any(keyword.lower() in question.lower() for keyword in keywords):
-#                 return section
-#         return None
-
-#     def process_query(self, query: str, to_expand_to_n: int, keep_top_k: int) -> dict:
-#         # Step 1: Expand the Query
-#         expanded_queries = self.query_expander.generate_response(query, to_expand_to_n)
-        
-#         # Step 2: Self-query Processing (optional, if user ID extraction is needed)
-#         user_id = self.self_query_processor.extract_user_id(query)
-
-#         # Step 3: Retrieve relevant documents
-#         relevant_docs = self.query(query, top_k=keep_top_k)
-
-#         # Step 4: Rerank Passages
-#         reranked_passages = self.reranker.rerank_passages(query, relevant_docs, keep_top_k)
-
-#         # Return the expanded, reranked data
-#         return {
-#             "expanded_queries": expanded_queries,
-#             "user_id": user_id,
-#             "reranked_passages": reranked_passages,
-#         }
-
-from pydantic import BaseModel
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-import nltk
-from nltk.tokenize import sent_tokenize
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-# Download the punkt tokenizer for sentence splitting
-nltk.download('punkt', quiet=True)
-
-class DocumentConfig(BaseModel):
-    model_name: str
-    content: str
-
-    class Config:
-        protected_namespaces = ()
-
-class RAGPipeline(BaseModel):
-    documents: list[DocumentConfig]
-
-    class Config:
-        protected_namespaces = ()
-
-    def __init__(self, documents):
-        self.documents = documents
-        self.text_splitter = self._create_text_splitter()
-        self.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-        self.vector_store = self._create_vector_store()
-
-    def _create_text_splitter(self):
-        return RecursiveCharacterTextSplitter(
-            chunk_size=1500,
-            chunk_overlap=150,
-            length_function=len,
-            separators=["\n\n", "\n", " ", ""]
-        )
-
-    def _split_into_sentences(self, text):
-        return sent_tokenize(text)
-
-    def _create_vector_store(self):
-        texts = []
-        metadatas = []
-        for doc in self.documents:
-            sentences = self._split_into_sentences(doc.content)
-            chunks = self.text_splitter.create_documents(sentences)
-            texts.extend([chunk.page_content for chunk in chunks])
-            metadatas.extend([{"source": doc.model_name} for _ in chunks])
-
-        return FAISS.from_texts(texts, self.embeddings, metadatas=metadatas)
-
-    def query(self, question, k=3):
-        results = self.vector_store.similarity_search_with_score(question, k=k)
-        return [(doc.page_content, doc.metadata["source"], score) for doc, score in results]
-
+        return "General"
