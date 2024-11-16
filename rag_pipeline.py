@@ -1,17 +1,14 @@
-import os
+import numpy as np
 import concurrent.futures
-from dotenv import load_dotenv
+from llm_helper import llm
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 import structlog
-from langchain_openai import OpenAIEmbeddings
+from langchain.chains import RetrievalQAWithSourcesChain
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
-from langchain_openai import ChatOpenAI
 from document_processor import DocumentProcessor
-
-# Load environment variables
-load_dotenv()
 
 # Logger setup
 def get_logger(cls: str):
@@ -19,10 +16,7 @@ def get_logger(cls: str):
 
 logger = get_logger(__name__)
 
-# API Key retrieval
-api_key = os.getenv("OPENAI_API_KEY")
 process_document = DocumentProcessor()
-
 
 # Base class for prompt templates
 class BasePromptTemplate(ABC, BaseModel):
@@ -78,14 +72,16 @@ class SelfQueryTemplate(BasePromptTemplate):
 class RerankingTemplate(BasePromptTemplate):
     prompt: str = """You are an AI language model assistant. Your task is to rerank passages related to a query
     based on their relevance. 
-    You should only return the summary of the most relevant passage.
-    
+    You should return only the most relevant passage and its source.
+
     The following are passages related to this query: {question}.
     
     Passages: 
     {passages}
     
-    Please provide only the summary of the most relevant passage.
+    Please provide only the text of the most relevant passage and its source in the format:
+    "<passage_text>"
+    "Source: <source>"
     """
 
     def create_template(self, keep_top_k: int) -> PromptTemplate:
@@ -96,14 +92,14 @@ class RerankingTemplate(BasePromptTemplate):
         )
 
     @property
-    def separator(self) -> str:
+    def separator(self) :
         return "\n#next-document#\n"
 
 
 # General Chain Class
 class GeneralChain:
     @staticmethod
-    def get_chain(llm, template: PromptTemplate, output_key: str, verbose=True):
+    def get_chain(llm, template: PromptTemplate, output_key, verbose=True):
         return LLMChain(
             llm=llm, prompt=template, output_key=output_key, verbose=verbose
         )
@@ -112,17 +108,12 @@ class GeneralChain:
 # Query Expansion Class
 class QueryExpansion:
     @staticmethod
-    def generate_response(query: str, to_expand_to_n: int, api_key: str) -> list[str]:
+    def generate_response(query: str, to_expand_to_n: int):
         query_expansion_template = QueryExpansionTemplate()
         prompt_template = query_expansion_template.create_template(to_expand_to_n)
-        model = ChatOpenAI(
-            model="gpt-4-1106-preview",
-            api_key=api_key,
-            temperature=0,
-        )
 
         chain = GeneralChain().get_chain(
-            llm=model, output_key="expanded_queries", template=prompt_template
+            llm=llm, output_key="expanded_queries", template=prompt_template
         )
 
         response = chain.invoke({"question": query})
@@ -141,16 +132,11 @@ class QueryExpansion:
 # Self Query Class
 class SelfQuery:
     @staticmethod
-    def generate_response(query: str, api_key: str) -> str:
+    def generate_response(query: str):
         prompt = SelfQueryTemplate().create_template()
-        model = ChatOpenAI(
-            model="gpt-4-1106-preview",
-            api_key=api_key,
-            temperature=0,
-        )
 
         chain = GeneralChain().get_chain(
-            llm=model, output_key="metadata_filter_value", template=prompt
+            llm=llm, output_key="metadata_filter_value", template=prompt
         )
 
         response = chain.invoke({"question": query})
@@ -161,30 +147,25 @@ class SelfQuery:
 
 # Reranker Class
 class Reranker:
-    @staticmethod
-    def generate_response(
-        query: str, passages: list[str], keep_top_k: int, api_key: str
-    ) -> list[str]:
-        reranking_template = RerankingTemplate()
-        prompt_template = reranking_template.create_template(keep_top_k=keep_top_k)
+    def __init__(self):
+        self.reranking_template = RerankingTemplate()
 
-        model = ChatOpenAI(
-            model="gpt-4-1106-preview",
-            api_key=api_key,
-            temperature=0,
-        )
+    def generate_response(
+        self, query: str, passages: list[str], keep_top_k: int
+    ) -> list[str]:
+        prompt_template = self.reranking_template.create_template(keep_top_k=keep_top_k)
         chain = GeneralChain().get_chain(
-            llm=model, output_key="rerank", template=prompt_template
+            llm=llm, output_key="rerank", template=prompt_template
         )
 
         stripped_passages = [
             stripped_item for item in passages if (stripped_item := item.strip())
         ]
-        passages = reranking_template.separator.join(stripped_passages)
+        passages = self.reranking_template.separator.join(stripped_passages)
         response = chain.invoke({"question": query, "passages": passages})
 
         result = response["rerank"]
-        reranked_passages = result.strip().split(reranking_template.separator)
+        reranked_passages = result.strip().split(self.reranking_template.separator)
         stripped_passages = [
             stripped_item
             for item in reranked_passages
@@ -192,98 +173,130 @@ class Reranker:
         ]
 
         return stripped_passages
+    
+    def create_template(self, keep_top_k: int) -> PromptTemplate:
+        return self.reranking_template.create_template(keep_top_k)
+    
+    @property
+    def separator(self) -> str:
+        return self.reranking_template.separator
 
 
 # RAG Pipeline Class
 class RAGPipeline:
-    def __init__(self, faiss_index, document_embeddings, documents, api_key, 
+    def __init__(self, vectordb, documents,  embedding_model = "sentence-transformers/all-MiniLM-L6-v2",
                  k=5, to_expand_to_n_queries=3, keep_top_k=1):
-        self.faiss_index = faiss_index
-        self.document_embeddings = document_embeddings
+        self.faiss_index = vectordb
+        self.embedding_model = HuggingFaceEmbeddings(model_name=embedding_model)
         self.documents = documents
-        self.api_key = api_key
+        self.llm = llm
         self.k = k
         self.to_expand_to_n_queries = to_expand_to_n_queries
         self.keep_top_k = keep_top_k
         self._query_expander = QueryExpansion()
         self._metadata_extractor = SelfQuery()
         self._reranker = Reranker()
-        self._embedder = OpenAIEmbeddings(api_key=api_key)
+        self._embedder = HuggingFaceEmbeddings()
         # Initialize the executor for asynchronous task submission
         self._executor = concurrent.futures.ThreadPoolExecutor()
 
-    def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int, api_key: str, include_metadata: bool) -> list:
+    def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
         self.query = query
         
         # Generate expanded queries
         generated_queries = self._query_expander.generate_response(
             query=self.query,
-            to_expand_to_n=to_expand_to_n_queries,
-            api_key=api_key
+            to_expand_to_n=to_expand_to_n_queries
         )
         
         # Process each expanded query
         search_tasks = []
         for query in generated_queries:
             # Ensure include_metadata is passed in the search task
-            search_tasks.append(self._executor.submit(self._search_single_query, query, api_key, include_metadata))
+            search_tasks.append(self._executor.submit(self._search_single_query, query))
 
         # Collect search results
         hits = [task.result() for task in concurrent.futures.as_completed(search_tasks)]
         return hits
 
 
-    def _search_single_query(self, query: str, api_key: str) -> list:
+    def _search_single_query(self, query: str):
         # Debugging: print the arguments
-        print(f"Debug: _search_single_query called with query={query} and api_key={api_key}")
+        print(f"Debug: _search_single_query called with query={query}")
         
-        query_vector = self._embedder.embed_query(query)  # Embed query here
-        D, I = self.faiss_index.search(query_vector, self.k)
-        results = []
-        for idx in I[0]:
-            if idx != -1:
-                doc = self.documents[idx]
-                results.append({
-                    "text": doc,
-                    "source": "Unknown source",
-                })
-        return results
+        # Retrieve documents using FAISS index
+        retriever = self.faiss_index.as_retriever()
+        results = retriever.invoke(query)
+        print(results)
+        
+        # Format results
+        formatted_results = [
+            {"text": result.page_content, "source": result.metadata.get("source")}
+            for result in results
+        ]
+        
+        return formatted_results
 
 
+    def rerank(self, hits: list, query: str):
+        print(hits)
+        # Flatten the list of hits
+        flat_hits = [item for sublist in hits for item in sublist]
 
-    def rerank(self, hits: list, query: str) -> str:
-        content_list = [hit['text'] for hit in hits]
+        # Extract content and sources from hits
+        content_list = [
+            {"text": hit["text"], "source": hit.get("source")}
+            for hit in flat_hits if "text" in hit and hit["text"]
+        ]
+
+        # Use a default separator if not defined in the reranker template
         reranking_template = self._reranker.create_template(self.keep_top_k)
-        prompt_template = reranking_template
-        model = ChatOpenAI(
-            model="gpt-4-1106-preview",
-            api_key=self.api_key,
-            temperature=0,
-        )
+        separator = "\n\n"  # Default separator
+        if hasattr(reranking_template, "separator"):
+            separator = reranking_template.separator
 
+        # Combine passages into a single string for processing
+        passages = separator.join([item["text"].strip() for item in content_list if item["text"].strip()])
+
+        # Create and run the chain
         chain = GeneralChain().get_chain(
-            llm=model, output_key="rerank", template=prompt_template
+            llm=self.llm, output_key="rerank", template=reranking_template
         )
-
-        passages = reranking_template.separator.join([item.strip() for item in content_list if item.strip()])
         response = chain.invoke({"question": query, "passages": passages})
 
+        # Process the chain response to get reranked passages
         result = response["rerank"]
-        reranked_passages = result.strip().split(reranking_template.separator)
+        reranked_passages = result.strip().split(separator)
         reranked_passages = [item.strip() for item in reranked_passages if item.strip()]
+        print(reranked_passages)
 
+        # Identify the most relevant passage and its source
         if reranked_passages:
-            best_answer = reranked_passages[0]
-            best_answer_source = "Unknown source"
-            logger.info(f"Best answer selected: {best_answer}, Source: {best_answer_source}")
-            return best_answer, best_answer_source
+            best_answer_text = reranked_passages[0]
+            best_answer_source = next(
+                (item["source"] for item in content_list if item["text"].strip() == best_answer_text),
+                "."
+            )
+            return best_answer_text, best_answer_source
         else:
-            return "", "No source found"
+            return None, None  # Return None if no valid passages are found
 
-    def run_pipeline(self, query: str, api_key: str, include_metadata: bool) -> dict:
-        hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries, api_key=api_key, include_metadata=include_metadata)
+    
+    
+    def run_pipeline(self, query: str) -> dict:
+        # Retrieve the top-k relevant passages
+        hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries)
+        
+        # Get the best answer and its source from reranking
         best_answer, best_answer_source = self.rerank(hits, query)
-        return {"answer": best_answer, "source": best_answer_source}
+        print(f"best answer: {best_answer}")
+        print(f"best source: {best_answer_source}")
+        
+        # Prepare a clean result for display or further use
+        if best_answer and best_answer_source:
+            return {best_answer, best_answer_source}
+        else:
+            return {"answer": "No relevant passage found.", "source": "No source found."}
 
 
     def identify_section(self, question):

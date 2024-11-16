@@ -5,15 +5,9 @@ import trafilatura
 import numpy as np
 from utils import clean_text
 from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
-from sklearn.metrics.pairwise import cosine_similarity
-from dotenv import load_dotenv
 
-
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY")
 
 class DocumentProcessor:
     SECTION_KEYWORDS = {
@@ -80,21 +74,41 @@ class DocumentProcessor:
             combined_sentences.append(combined_sentence)
         return combined_sentences
 
-    def create_vector_index(self, combined_sentences, api_key):
-        """Create FAISS vector index from documents."""
-        documents = [Document(page_content=sentence, metadata={"source": "local"}) for sentence in combined_sentences]
-        embeddings = OpenAIEmbeddings(api_key=api_key)
-        return FAISS.from_documents(documents, embeddings)
+    def create_vectordb(self, combined_sentences) -> FAISS:
+        """Create FAISS vector database from a list of sentences."""
+        try:
+            # Convert sentences into Document objects
+            documents = []
+            for sentence in combined_sentences:
+                # Extract filename from sentence
+                filename = sentence.split(":")[1].strip() if ":" in sentence else "."
+                
+                # Create Document object with filename in metadata
+                document = Document(page_content=sentence, metadata={"source": filename})
+                documents.append(document)
+            
+            # Initialize the embeddings model
+            embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+            # Create the FAISS vector database from the documents and the embedding model
+            vectordb = FAISS.from_documents(documents, embedding=embeddings_model)
+            
+            # Return the FAISS index, documents
+            return vectordb, documents
+        
+        except Exception as e:
+            print(f"Error creating vector database: {e}")
+            return None, None
     
 
-    def process_and_chunk_text(self, uploaded_files, web_url=None, section=None, api_key=None):
+    def process_and_chunk_text(self, uploaded_files, web_url=None, section=None):
         """
         Process uploaded files and/or a webpage URL, assign a section tag,
         and chunk the text into meaningful segments.
         """
-        documents = []
-        all_embeddings = []
+        combined_sentences = []
         
+        # Process each uploaded file (PDF, TXT)
         for uploaded_file in uploaded_files:
             file_path = self.save_uploaded_file(uploaded_file)
             if file_path.endswith('.pdf'):
@@ -105,25 +119,22 @@ class DocumentProcessor:
                 text = self.process_txt(file_path)
             else:
                 continue  # Skip unsupported file types
-            documents.append({"source": uploaded_file.name, "content": text, "section": section})
             
+            # Chunk document and combine sentences
+            single_sentences_list = self._split_sentences(text)
+            sentence_sources = [f"File: {uploaded_file.name}"] * len(single_sentences_list)
+            combined_sentences.extend([f"{source}: {sentence}" for source, sentence in zip(sentence_sources, self._combine_sentences(single_sentences_list))])
+            
+        # Process webpage if URL is provided
         if web_url:
             text = self.process_webpage(web_url)
-            documents.append({"source": web_url, "content": text, "section": section})
+            single_sentences_list = self._split_sentences(text)
+            sentence_sources = [f"Website: {web_url}"] * len(single_sentences_list)
+            combined_sentences.extend([f"{source}: {sentence}" for source, sentence in zip(sentence_sources, self._combine_sentences(single_sentences_list))])
 
-        for document in documents:
-            single_sentences_list = self._split_sentences(document["content"])
-            combined_sentences = self._combine_sentences(single_sentences_list)
-            
-            # Assuming create_vector_index returns a FAISS object
-            faiss_index = self.create_vector_index(combined_sentences, api_key=api_key)
-            
-            # Extract embeddings from FAISS index
-            embeddings = faiss_index.embeddings
-            
-            all_embeddings.extend(embeddings)
-            document_embedding = np.array(all_embeddings)
-            
-            faiss_index = FAISS.from_documents([Document(page_content=document["content"]) for document in documents], embeddings)
+        # Create a single FAISS vector database from combined sentences
+        vectordb, documents = self.create_vectordb(combined_sentences)
+        print(f"documents: {documents}")
         
-        return documents, document_embedding, faiss_index
+        # Return the single FAISS vector database and embeddings
+        return vectordb, documents

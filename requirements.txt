@@ -16,10 +16,9 @@ tokenizers
 lxml_html_clean
 unstructured
 faiss-cpu
-openai
-langchain_openai
-llm_components
-langchain
 structlog
 python-dotenv
-langchain_core
+langchain-core
+langchain-huggingface
+pinecone
+langchain-groq

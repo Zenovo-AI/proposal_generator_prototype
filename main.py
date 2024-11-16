@@ -5,11 +5,6 @@ from rag_pipeline import RAGPipeline
 from chat_bot import ChatBot
 import uuid
 import cryptography
-from dotenv import load_dotenv
-
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY")
 
 
 # Print the version of the cryptography package
@@ -43,10 +38,10 @@ def main():
         # Process documents and initialize pipeline if files or URL provided
         if uploaded_files or web_url:
             with st.spinner("Processing documents..."):
-                documents, faiss_index, document_embedding = process_document.process_and_chunk_text(uploaded_files, web_url, section, api_key)
+                vectordb, documents = process_document.process_and_chunk_text(uploaded_files, web_url, section)
 
                 # Initialize the RAGPipeline with the documents
-                st.session_state.rag_pipeline = RAGPipeline(faiss_index, documents, document_embedding, api_key)
+                st.session_state.rag_pipeline = RAGPipeline(vectordb, documents)
                 st.session_state.chat_bot = ChatBot(st.session_state.rag_pipeline)
             st.success("Documents processed successfully!")
         else:
@@ -59,16 +54,19 @@ def main():
         # Query input field appears only after documents are processed
         user_input = st.text_input("Ask a question about hospital policies:")
         
-        if st.button("Send") and user_input:
+        if st.button("Send") and user_input.strip():  # Added input validation
             # Get the response from the chatbot
-            response = st.session_state.chat_bot.get_response(user_input, api_key=api_key)
+            response = st.session_state.chat_bot.get_response(user_input)
             # Append the conversation to the chat history
             st.session_state.chat_history.append(("You", user_input))
             st.session_state.chat_history.append(("Bot", response))
-
+            
+            # Limit chat history display to 10 messages
+            st.session_state.chat_history = st.session_state.chat_history[-10:]
+        
         # Display the chat history
         for role, message in st.session_state.chat_history:
-            st.text_area(role, value=message, height=50, key=f"response_text_{uuid.uuid4()}", disabled=True)
+            st.text_area(role, value=message, height=100, key=f"response_text_{uuid.uuid4()}", disabled=True)
     else:
         # Show message prompting for document processing if not done yet
         st.warning("Please process documents before starting the chat.")
