@@ -23,8 +23,9 @@ logger = get_logger(__name__)
 # session_manager = SessionManager()
 # api_key = session_manager.get_api_key()
 GROQ_API_KEY = st.secrets["GROQ"]["GROQ_API_KEY"]
+model_name = "Llama-3.1-70b-versatile"
 
-llm = ChatGroq(groq_api_key=GROQ_API_KEY, model_name="Llama-3.1-70b-versatile")
+llm = ChatGroq(groq_api_key=GROQ_API_KEY, model_name=model_name)
 
 
 # Base class for prompt templates

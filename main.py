@@ -3,9 +3,9 @@ from document_processor import DocumentProcessor
 from rag_pipeline import RAGPipeline
 from chat_bot import ChatBot
 
+
 process_document = DocumentProcessor()
 
-# Initialize session state
 if 'rag_pipeline' not in st.session_state:
     st.session_state.rag_pipeline = None
 if 'chat_bot' not in st.session_state:
