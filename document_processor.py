@@ -99,6 +99,7 @@ class DocumentProcessor:
             paragraphs = text.split('\n\n')
             for paragraph in paragraphs:
                 documents.append(Document(page_content=paragraph))
+                print(documents)
 
         vectordb = self.create_vectordb(documents)
         return vectordb, documents
