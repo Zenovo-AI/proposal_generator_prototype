@@ -1,8 +1,4 @@
 from langchain_groq import ChatGroq
-from dotenv import load_dotenv
-import os
+from main import api_key
 
-
-load_dotenv()
-
-llm = ChatGroq(groq_api_key=os.getenv("GROQ_API_KEY"), model_name = "llama-3.2-90b-text-preview")
+llm = ChatGroq(groq_api_key=api_key, model_name = "Llama-3.1-70b-versatile")

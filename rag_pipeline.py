@@ -144,42 +144,6 @@ class SelfQuery:
         return result
 
 
-# Reranker Class
-# class Reranker:
-#     def __init__(self):
-#         self.reranking_template = RerankingTemplate()
-
-#     def generate_response(
-#         self, query: str, passages: list[str], keep_top_k: int
-#     ) -> list[str]:
-#         prompt_template = self.reranking_template.create_template(keep_top_k=keep_top_k)
-#         chain = GeneralChain().get_chain(
-#             llm=llm, output_key="rerank", template=prompt_template
-#         )
-
-#         stripped_passages = [
-#             stripped_item for item in passages if (stripped_item := item.strip())
-#         ]
-#         passages = self.reranking_template.separator.join(stripped_passages)
-#         response = chain.invoke({"question": query, "passages": passages})
-
-#         result = response["rerank"]
-#         reranked_passages = result.strip().split(self.reranking_template.separator)
-#         stripped_passages = [
-#             stripped_item
-#             for item in reranked_passages
-#             if (stripped_item := item.strip())
-#         ]
-
-#         return stripped_passages
-    
-    # def create_template(self, keep_top_k: int) -> PromptTemplate:
-    #     return self.reranking_template.create_template(keep_top_k)
-    
-    # @property
-    # def separator(self) -> str:
-    #     return self.reranking_template.separator
-    
 class Reranker:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained("cross-encoder/stsb-distilroberta-base")
@@ -237,98 +201,6 @@ class RAGPipeline:
         # Initialize the executor for asynchronous task submission
         self._executor = concurrent.futures.ThreadPoolExecutor()
 
-    # def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
-    #     self.query = query
-        
-    #     # Generate expanded queries
-    #     generated_queries = self._query_expander.generate_response(
-    #         query=self.query,
-    #         to_expand_to_n=to_expand_to_n_queries
-    #     )
-        
-    #     # Process each expanded query
-    #     search_tasks = []
-    #     for query in generated_queries:
-    #         # Ensure include_metadata is passed in the search task
-    #         search_tasks.append(self._executor.submit(self._search_single_query, query))
-
-    #     # Collect search results
-    #     hits = [task.result() for task in concurrent.futures.as_completed(search_tasks)]
-    #     return hits
-
-    
-    
-    # def _search_single_query(self, query: str):
-    #     # Debugging: print the arguments
-    #     print(f"Debug: _search_single_query called with query={query}")
-        
-    #     # Retrieve documents using FAISS index
-    #     results = self.faiss_index.similarity_search_with_score(query, k=3)
-    #     print(f"Results returned: {results}")
-        
-    #     return results
-
-
-
-    # def rerank(self, hits: list):
-    #     # Flatten the list of hits
-    #     flat_hits = [item for sublist in hits for item in sublist]
-
-    #     # Sort flat_hits by score in descending order
-    #     flat_hits.sort(key=lambda x: x[1], reverse=True)  # Assuming score is the second element in the tuple
-
-    #     # Identify the most relevant passage
-    #     if flat_hits:
-    #         best_answer = flat_hits[0][0]  # Assuming text is the first element in the tuple
-    #         return best_answer
-    #     else:
-    #         return None  # Return None if no valid passages are found
-        
-        
-    # def run_pipeline(self, query: str) -> str:
-    #     # Retrieve the top-k relevant passages
-    #     hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries)
-        
-    #     # Get the best answer from reranking
-    #     best_answer = self.rerank(hits)
-    #     print(f"best answer: {best_answer}")
-        
-    #     # Paraphrase the best answer using LLM
-    #     if best_answer:
-    #         paraphrased_answer = self.paraphrase_answer(best_answer)
-            
-    #         # Format the paraphrased answer
-    #         formatted_answer = paraphrased_answer.strip()
-            
-    #         return formatted_answer
-    #     else:
-    #         return "No relevant passage found."
-
-
-    # def paraphrase_answer(self, answer: str) -> str:
-    #     # Create a prompt template
-    #     template = PromptTemplate(
-    #         input_variables=["text"],
-    #         template="Please condense and rephrase the following text to answer the question clearly and concisely. NO PREAMBLE: {text}",
-    #     )
-        
-    #     # Create a prompt dictionary with the correct format
-    #     prompt = {"text": answer}
-        
-    #     # Get the LLM response
-    #     chain = GeneralChain().get_chain(llm=self.llm, template=template, output_key="paraphrased_answer")
-    #     response = chain.invoke(prompt)
-        
-    #     # Extract the paraphrased answer
-    #     paraphrased_answer = response["paraphrased_answer"]
-        
-    #     return paraphrased_answer
-    
-    # def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
-    #     # Retrieve documents using FAISS index
-    #     results = self.faiss_index.similarity_search_with_score(query, k=to_expand_to_n_queries)
-    #     print(f"Debug: _search_single_query called with query={query}")
-    #     return results
     
     def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
         # Perform query expansion
@@ -381,10 +253,3 @@ class RAGPipeline:
             return formatted_answer
         else:
             return "No relevant passage found."
-
-
-    def identify_section(self, question):
-        for section, keywords in process_document.section_keywords.items():
-            if any(keyword in question.lower() for keyword in keywords):
-                return section
-        return "General"
