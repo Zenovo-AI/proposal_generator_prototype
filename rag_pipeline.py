@@ -1,5 +1,5 @@
 import concurrent.futures
-from llm_helper import llm
+import streamlit as st
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 import structlog
@@ -8,12 +8,19 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+from langchain_groq import ChatGroq
+
+
 
 # Logger setup
 def get_logger(cls: str):
     return structlog.get_logger().bind(cls=cls)
 
 logger = get_logger(__name__)
+
+
+            
+llm = ChatGroq(groq_api_key=st.session_state.api_key, model_name="Llama-3.1-70b-versatile")
 
 # Base class for prompt templates
 class BasePromptTemplate(ABC, BaseModel):
@@ -182,10 +189,10 @@ class Reranker:
 
 # RAG Pipeline Class
 class RAGPipeline:
-    def __init__(self, vectordb, documents,  embedding_model = "sentence-transformers/all-MiniLM-L6-v2",
+    def __init__(self, vectordb, documents,
                  k=5, to_expand_to_n_queries=3, keep_top_k=1):
         self.faiss_index = vectordb
-        self.embedding_model = HuggingFaceEmbeddings(model_name=embedding_model)
+        self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         self.documents = documents
         self.llm = llm
         self.k = k
