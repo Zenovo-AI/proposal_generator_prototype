@@ -22,7 +22,10 @@ logger = get_logger(__name__)
 
             
 session_manager = SessionManager()
-llm = ChatGroq(groq_api_key=session_manager.get_api_key(), model_name="Llama-3.1-70b-versatile")
+api_key = session_manager.get_api_key()
+
+llm = ChatGroq(groq_api_key=api_key, model_name="Llama-3.1-70b-versatile")
+
 
 # Base class for prompt templates
 class BasePromptTemplate(ABC, BaseModel):
