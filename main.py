@@ -2,6 +2,8 @@ import streamlit as st
 from document_processor import DocumentProcessor
 from rag_pipeline import RAGPipeline
 from chat_bot import ChatBot
+from session_manager import SessionManager
+
 
 
 
@@ -9,8 +11,20 @@ from chat_bot import ChatBot
 # Ensure that `llm` is passed to components that need it
 process_document = DocumentProcessor()
 
+# Initialize api_key in session state
+session_manager = SessionManager()
+
 st.sidebar.header("Configuration")
-st.session_state.api_key = st.sidebar.text_input("Enter your Groq API KEY", type="password")
+api_key = st.sidebar.text_input("Enter your Groq API KEY", type="password")
+session_manager.set_api_key(api_key)
+# Initialize session state
+if 'rag_pipeline' not in st.session_state:
+    st.session_state.rag_pipeline = None
+if 'chat_bot' not in st.session_state:
+    st.session_state.chat_bot = None
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+
 
 def main():
     st.title("Hospital Policy Chat Bot")

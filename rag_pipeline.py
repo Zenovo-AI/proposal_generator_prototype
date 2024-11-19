@@ -8,6 +8,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+from session_manager import SessionManager
 from langchain_groq import ChatGroq
 
 
@@ -20,7 +21,8 @@ logger = get_logger(__name__)
 
 
             
-llm = ChatGroq(groq_api_key=st.session_state.api_key, model_name="Llama-3.1-70b-versatile")
+session_manager = SessionManager()
+llm = ChatGroq(groq_api_key=session_manager.get_api_key(), model_name="Llama-3.1-70b-versatile")
 
 # Base class for prompt templates
 class BasePromptTemplate(ABC, BaseModel):
