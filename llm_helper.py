@@ -1,5 +1,5 @@
 import streamlit as st
-from llm_helper import ChatGroq
+from langchain_groq import ChatGroq
 
 # Initialize and retrieve api_key
 st.session_state.api_key = st.session_state.api_key or st.sidebar.text_input("Enter your Groq API KEY")
