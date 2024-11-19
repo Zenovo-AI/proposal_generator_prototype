@@ -15,6 +15,15 @@ if 'chat_bot' not in st.session_state:
     st.session_state.chat_bot = None
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
+if 'api_key' not in st.session_state:
+    # Prompt user to input API key
+    st.sidebar.header("Configuration")
+    api_key = st.sidebar.text_input("Enter your Groq API KEY")
+    st.session_state.api_key = api_key
+else:
+    # Retrieve API key from session state
+    api_key = st.session_state.api_key
+
 
 # Instantiate the DocumentProcessor
 process_document = DocumentProcessor()
