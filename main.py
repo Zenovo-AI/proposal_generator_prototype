@@ -11,12 +11,12 @@ from session_manager import SessionManager
 # Ensure that `llm` is passed to components that need it
 process_document = DocumentProcessor()
 
-# Initialize api_key in session state
-session_manager = SessionManager()
+# # Initialize api_key in session state
+# session_manager = SessionManager()
 
-st.sidebar.header("Configuration")
-api_key = st.sidebar.text_input("Enter your Groq API KEY", type="password")
-session_manager.set_api_key(api_key)
+# st.sidebar.header("Configuration")
+# api_key = st.sidebar.text_input("Enter your Groq API KEY", type="password")
+# session_manager.set_api_key(api_key)
 # Initialize session state
 if 'rag_pipeline' not in st.session_state:
     st.session_state.rag_pipeline = None

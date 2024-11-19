@@ -21,10 +21,10 @@ logger = get_logger(__name__)
 
 
             
-session_manager = SessionManager()
-api_key = session_manager.get_api_key()
+# session_manager = SessionManager()
+# api_key = session_manager.get_api_key()
 
-llm = ChatGroq(groq_api_key=api_key, model_name="Llama-3.1-70b-versatile")
+llm = ChatGroq(groq_api_key=st.secrets["groq_api_key"], model_name="Llama-3.1-70b-versatile")
 
 
 # Base class for prompt templates
