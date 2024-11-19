@@ -1,38 +1,39 @@
-import os
-import re
-import pdfplumber
-import trafilatura
-import numpy as np
-from utils import clean_text
+import streamlit as st
+from io import BytesIO
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
+import pdfplumber
+import trafilatura
+from utils import clean_text
+import logging
 
+logging.basicConfig(level=logging.INFO)
 
 class DocumentProcessor:
     SECTION_KEYWORDS = {
-        "Technical Requirements": ["technical", "requirements"],
-        "Project Experience": ["experience", "project"],
-        "Team Profiles": ["team", "profile"],
-        "Evaluation Criteria": ["evaluation", "criteria"]
+        "Request for Proposal (RFP) Document",
+        "Terms of Reference (ToR)",
+        "Technical Evaluation Criteria",
+        "Company and Team Profiles",
+        "Environmental and Social Standards",
+        "Project History and Relevant Experience",
+        "Budget and Financial Documents",
+        "Additional Requirements and Compliance Documents"
     }
 
     def __init__(self):
-        pass
-
-    def save_uploaded_file(self, uploaded_file):
-        """Save uploaded files to the 'uploaded_files' directory."""
-        if not os.path.exists('uploaded_files'):
-            os.makedirs('uploaded_files')
-        file_path = os.path.join('uploaded_files', uploaded_file.name)
-        with open(file_path, 'wb') as f:
-            f.write(uploaded_file.getbuffer())
-        return file_path
+        if "section_embeddings" not in st.session_state:
+            st.session_state.section_embeddings = {}  # Store embeddings for each section
 
     def process_pdf(self, pdf_file):
-        """Extract text from a PDF file using pdfplumber."""
+        """Extract text from a PDF file using pdfplumber, maintaining paragraph structure."""
         with pdfplumber.open(pdf_file) as pdf:
-            text = "\n\n".join(page.extract_text() for page in pdf.pages)
+            text = ""
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                paragraphs = page_text.split('\n\n')
+                text += '\n\n'.join(paragraphs) + '\n\n'
         return text.strip()
 
     def extract_tables_from_pdf(self, pdf_file):
@@ -47,94 +48,57 @@ class DocumentProcessor:
 
     def process_txt(self, txt_file):
         """Read and return the content of a TXT file."""
-        with open(txt_file, 'r', encoding='utf-8') as file:
-            return file.read()
+        with BytesIO(txt_file) as file:
+            text = file.read().decode("utf-8")
+            text = clean_text(text)
+            return text
 
     def process_webpage(self, url):
         """Download and extract text content from a webpage."""
         downloaded = trafilatura.fetch_url(url)
-        return trafilatura.extract(downloaded)
+        web_page = trafilatura.extract(downloaded)
+        web_page = clean_text(web_page)
+        return web_page
 
-
-    def _split_sentences(self, text):
-        """Split text into sentences."""
-        cleaned_text = clean_text(text)
-        sentences = re.split(r'(?<=[.?!])\s+', cleaned_text)
-        return sentences
-
-    def _combine_sentences(self, sentences):
-        """Combine sentences with context."""
-        combined_sentences = []
-        for i in range(len(sentences)):
-            combined_sentence = sentences[i]
-            if i > 0:
-                combined_sentence = sentences[i-1] + ' ' + combined_sentence
-            if i < len(sentences) - 1:
-                combined_sentence += ' ' + sentences[i+1]
-            combined_sentences.append(combined_sentence)
-        return combined_sentences
-
-    def create_vectordb(self, combined_sentences) -> FAISS:
-        """Create FAISS vector database from a list of sentences."""
+    def create_vectordb(self, documents) -> FAISS:
+        """Create FAISS vector database from a list of documents."""
         try:
-            # Convert sentences into Document objects
-            documents = []
-            for sentence in combined_sentences:
-                # Extract filename from sentence
-                filename = sentence.split(":")[1].strip() if ":" in sentence else "."
-                
-                # Create Document object with filename in metadata
-                document = Document(page_content=sentence, metadata={"source": filename})
-                documents.append(document)
-            
-            # Initialize the embeddings model
             embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-            # Create the FAISS vector database from the documents and the embedding model
             vectordb = FAISS.from_documents(documents, embedding=embeddings_model)
-            
-            # Return the FAISS index, documents
-            return vectordb, documents
-        
+            return vectordb
         except Exception as e:
-            print(f"Error creating vector database: {e}")
-            return None, None
-    
+            logging.error(f"Error creating vector database: {e}")
+            return None
 
     def process_and_chunk_text(self, uploaded_files, web_url=None, section=None):
-        """
-        Process uploaded files and/or a webpage URL, assign a section tag,
-        and chunk the text into meaningful segments.
-        """
-        combined_sentences = []
-        
-        # Process each uploaded file (PDF, TXT)
+        """Process uploaded files and/or a webpage URL, assign a section tag, and chunk the text."""
+        documents = []
         for uploaded_file in uploaded_files:
-            file_path = self.save_uploaded_file(uploaded_file)
-            if file_path.endswith('.pdf'):
-                text = self.process_pdf(file_path)
-                tables = self.extract_tables_from_pdf(file_path)
-                text += '\n\n'.join(str(table) for table in tables)
-            elif file_path.endswith('.txt'):
-                text = self.process_txt(file_path)
+            file_bytes = uploaded_file.getvalue()  # Get the file content as bytes
+            
+            # Process based on file type
+            if uploaded_file.name.endswith(".pdf"):
+                tables = self.extract_tables_from_pdf(BytesIO(file_bytes))
+                text = self.process_pdf(BytesIO(file_bytes))
+                paragraphs = text.split('\n\n')
+                for paragraph in paragraphs:
+                    documents.append(Document(page_content=paragraph))
+                for table in tables:
+                    table_text = '\n'.join([str(row) for row in table])  # Convert table to string
+                    documents.append(Document(page_content=table_text))
+            elif uploaded_file.name.endswith('.txt'):
+                text = self.process_txt(file_bytes)
+                paragraphs = text.split('\n\n')
+                for paragraph in paragraphs:
+                    documents.append(Document(page_content=paragraph))
             else:
-                continue  # Skip unsupported file types
-            
-            # Chunk document and combine sentences
-            single_sentences_list = self._split_sentences(text)
-            sentence_sources = [f"File: {uploaded_file.name}"] * len(single_sentences_list)
-            combined_sentences.extend([f"{source}: {sentence}" for source, sentence in zip(sentence_sources, self._combine_sentences(single_sentences_list))])
-            
-        # Process webpage if URL is provided
+                continue
+
         if web_url:
             text = self.process_webpage(web_url)
-            single_sentences_list = self._split_sentences(text)
-            sentence_sources = [f"Website: {web_url}"] * len(single_sentences_list)
-            combined_sentences.extend([f"{source}: {sentence}" for source, sentence in zip(sentence_sources, self._combine_sentences(single_sentences_list))])
+            paragraphs = text.split('\n\n')
+            for paragraph in paragraphs:
+                documents.append(Document(page_content=paragraph))
 
-        # Create a single FAISS vector database from combined sentences
-        vectordb, documents = self.create_vectordb(combined_sentences)
-        print(f"documents: {documents}")
-        
-        # Return the single FAISS vector database and embeddings
+        vectordb = self.create_vectordb(documents)
         return vectordb, documents

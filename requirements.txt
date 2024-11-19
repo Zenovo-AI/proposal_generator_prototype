@@ -15,10 +15,11 @@ cryptography
 tokenizers
 lxml_html_clean
 unstructured
-faiss-cpu
 structlog
 python-dotenv
 langchain-core
 langchain-huggingface
 pinecone
 langchain-groq
+torch
+PyPDF2

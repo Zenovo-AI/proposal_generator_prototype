@@ -1,14 +1,14 @@
-import numpy as np
 import concurrent.futures
 from llm_helper import llm
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 import structlog
-from langchain.chains import RetrievalQAWithSourcesChain
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from document_processor import DocumentProcessor
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
 # Logger setup
 def get_logger(cls: str):
@@ -71,8 +71,8 @@ class SelfQueryTemplate(BasePromptTemplate):
 # Reranking Template
 class RerankingTemplate(BasePromptTemplate):
     prompt: str = """You are an AI language model assistant. Your task is to rerank passages related to a query
-    based on their relevance. 
-    You should return only the most relevant passage and its source.
+    based on their relevance and paraphrase the passages that it is very readable. 
+    You should return only the most relevant passage.
 
     The following are passages related to this query: {question}.
     
@@ -81,7 +81,6 @@ class RerankingTemplate(BasePromptTemplate):
     
     Please provide only the text of the most relevant passage and its source in the format:
     "<passage_text>"
-    "Source: <source>"
     """
 
     def create_template(self, keep_top_k: int) -> PromptTemplate:
@@ -146,41 +145,79 @@ class SelfQuery:
 
 
 # Reranker Class
+# class Reranker:
+#     def __init__(self):
+#         self.reranking_template = RerankingTemplate()
+
+#     def generate_response(
+#         self, query: str, passages: list[str], keep_top_k: int
+#     ) -> list[str]:
+#         prompt_template = self.reranking_template.create_template(keep_top_k=keep_top_k)
+#         chain = GeneralChain().get_chain(
+#             llm=llm, output_key="rerank", template=prompt_template
+#         )
+
+#         stripped_passages = [
+#             stripped_item for item in passages if (stripped_item := item.strip())
+#         ]
+#         passages = self.reranking_template.separator.join(stripped_passages)
+#         response = chain.invoke({"question": query, "passages": passages})
+
+#         result = response["rerank"]
+#         reranked_passages = result.strip().split(self.reranking_template.separator)
+#         stripped_passages = [
+#             stripped_item
+#             for item in reranked_passages
+#             if (stripped_item := item.strip())
+#         ]
+
+#         return stripped_passages
+    
+    # def create_template(self, keep_top_k: int) -> PromptTemplate:
+    #     return self.reranking_template.create_template(keep_top_k)
+    
+    # @property
+    # def separator(self) -> str:
+    #     return self.reranking_template.separator
+    
 class Reranker:
     def __init__(self):
-        self.reranking_template = RerankingTemplate()
+        self.tokenizer = AutoTokenizer.from_pretrained("cross-encoder/stsb-distilroberta-base")
+        self.model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/stsb-distilroberta-base")
 
-    def generate_response(
-        self, query: str, passages: list[str], keep_top_k: int
-    ) -> list[str]:
-        prompt_template = self.reranking_template.create_template(keep_top_k=keep_top_k)
-        chain = GeneralChain().get_chain(
-            llm=llm, output_key="rerank", template=prompt_template
-        )
+    def rerank(self, query: str, hits: list):
+        # Prepare inputs for the model
+        inputs = []
+        for hit in hits:
+            document, score = hit  # Unpack the tuple
+            inputs.append(self.tokenizer.encode_plus(
+                query,
+                document.page_content,  # Access the text attribute of the Document object
+                add_special_tokens=True,
+                max_length=512,
+                return_attention_mask=True,
+                return_tensors="pt",
+            ))
 
-        stripped_passages = [
-            stripped_item for item in passages if (stripped_item := item.strip())
-        ]
-        passages = self.reranking_template.separator.join(stripped_passages)
-        response = chain.invoke({"question": query, "passages": passages})
+        # Get scores from the model
+        scores = []
+        with torch.no_grad():
+            for input in inputs:
+                outputs = self.model(**input)
+                score = torch.softmax(outputs.logits, dim=1)[0, 0]  # Access the single score
+                scores.append(score.item())
 
-        result = response["rerank"]
-        reranked_passages = result.strip().split(self.reranking_template.separator)
-        stripped_passages = [
-            stripped_item
-            for item in reranked_passages
-            if (stripped_item := item.strip())
-        ]
+        # Combine hits with scores and sort
+        hits_with_scores = list(zip(hits, scores))  # Use the original hit tuples
+        hits_with_scores.sort(key=lambda x: x[1], reverse=True)
+        print(hits_with_scores)
 
-        return stripped_passages
-    
-    def create_template(self, keep_top_k: int) -> PromptTemplate:
-        return self.reranking_template.create_template(keep_top_k)
-    
-    @property
-    def separator(self) -> str:
-        return self.reranking_template.separator
-
+        # Identify the most relevant passage
+        if hits_with_scores:
+            best_answer = hits_with_scores[0][0][0].page_content  # Access the text attribute of the best hit
+            return best_answer
+        else:
+            return None
 
 # RAG Pipeline Class
 class RAGPipeline:
@@ -195,108 +232,155 @@ class RAGPipeline:
         self.keep_top_k = keep_top_k
         self._query_expander = QueryExpansion()
         self._metadata_extractor = SelfQuery()
-        self._reranker = Reranker()
+        self.reranker = Reranker()
         self._embedder = HuggingFaceEmbeddings()
         # Initialize the executor for asynchronous task submission
         self._executor = concurrent.futures.ThreadPoolExecutor()
 
+    # def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
+    #     self.query = query
+        
+    #     # Generate expanded queries
+    #     generated_queries = self._query_expander.generate_response(
+    #         query=self.query,
+    #         to_expand_to_n=to_expand_to_n_queries
+    #     )
+        
+    #     # Process each expanded query
+    #     search_tasks = []
+    #     for query in generated_queries:
+    #         # Ensure include_metadata is passed in the search task
+    #         search_tasks.append(self._executor.submit(self._search_single_query, query))
+
+    #     # Collect search results
+    #     hits = [task.result() for task in concurrent.futures.as_completed(search_tasks)]
+    #     return hits
+
+    
+    
+    # def _search_single_query(self, query: str):
+    #     # Debugging: print the arguments
+    #     print(f"Debug: _search_single_query called with query={query}")
+        
+    #     # Retrieve documents using FAISS index
+    #     results = self.faiss_index.similarity_search_with_score(query, k=3)
+    #     print(f"Results returned: {results}")
+        
+    #     return results
+
+
+
+    # def rerank(self, hits: list):
+    #     # Flatten the list of hits
+    #     flat_hits = [item for sublist in hits for item in sublist]
+
+    #     # Sort flat_hits by score in descending order
+    #     flat_hits.sort(key=lambda x: x[1], reverse=True)  # Assuming score is the second element in the tuple
+
+    #     # Identify the most relevant passage
+    #     if flat_hits:
+    #         best_answer = flat_hits[0][0]  # Assuming text is the first element in the tuple
+    #         return best_answer
+    #     else:
+    #         return None  # Return None if no valid passages are found
+        
+        
+    # def run_pipeline(self, query: str) -> str:
+    #     # Retrieve the top-k relevant passages
+    #     hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries)
+        
+    #     # Get the best answer from reranking
+    #     best_answer = self.rerank(hits)
+    #     print(f"best answer: {best_answer}")
+        
+    #     # Paraphrase the best answer using LLM
+    #     if best_answer:
+    #         paraphrased_answer = self.paraphrase_answer(best_answer)
+            
+    #         # Format the paraphrased answer
+    #         formatted_answer = paraphrased_answer.strip()
+            
+    #         return formatted_answer
+    #     else:
+    #         return "No relevant passage found."
+
+
+    # def paraphrase_answer(self, answer: str) -> str:
+    #     # Create a prompt template
+    #     template = PromptTemplate(
+    #         input_variables=["text"],
+    #         template="Please condense and rephrase the following text to answer the question clearly and concisely. NO PREAMBLE: {text}",
+    #     )
+        
+    #     # Create a prompt dictionary with the correct format
+    #     prompt = {"text": answer}
+        
+    #     # Get the LLM response
+    #     chain = GeneralChain().get_chain(llm=self.llm, template=template, output_key="paraphrased_answer")
+    #     response = chain.invoke(prompt)
+        
+    #     # Extract the paraphrased answer
+    #     paraphrased_answer = response["paraphrased_answer"]
+        
+    #     return paraphrased_answer
+    
+    # def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
+    #     # Retrieve documents using FAISS index
+    #     results = self.faiss_index.similarity_search_with_score(query, k=to_expand_to_n_queries)
+    #     print(f"Debug: _search_single_query called with query={query}")
+    #     return results
+    
     def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
-        self.query = query
+        # Perform query expansion
+        expanded_queries = self._query_expander.generate_response(query, to_expand_to_n_queries)
+        print(f"Expanded Queries: {expanded_queries}")
         
-        # Generate expanded queries
-        generated_queries = self._query_expander.generate_response(
-            query=self.query,
-            to_expand_to_n=to_expand_to_n_queries
+        # Retrieve documents using FAISS index for each expanded query
+        results = []
+        for expanded_query in expanded_queries:
+            result = self.faiss_index.similarity_search_with_score(expanded_query, k=k)
+            results.extend(result)
+        
+        print(f"Debug: _search_single_query called with expanded queries={expanded_queries}")
+        return results
+
+    def paraphrase_answer(self, answer: str) -> str:
+        # Create a prompt template
+        template = PromptTemplate(
+            input_variables=["text"],
+            template="Please condense and rephrase the following text to answer the question clearly and concisely. NO PREAMBLE and NO NEW QUESTION, JUST PARAPHRASE THE ANSWER: {text}",
         )
         
-        # Process each expanded query
-        search_tasks = []
-        for query in generated_queries:
-            # Ensure include_metadata is passed in the search task
-            search_tasks.append(self._executor.submit(self._search_single_query, query))
-
-        # Collect search results
-        hits = [task.result() for task in concurrent.futures.as_completed(search_tasks)]
-        return hits
-
-
-    def _search_single_query(self, query: str):
-        # Debugging: print the arguments
-        print(f"Debug: _search_single_query called with query={query}")
+        # Create a prompt dictionary with the correct format
+        prompt = {"text": answer}
         
-        # Retrieve documents using FAISS index
-        retriever = self.faiss_index.as_retriever()
-        results = retriever.invoke(query)
-        print(results)
+        # Get the LLM response
+        chain = GeneralChain().get_chain(llm=self.llm, template=template, output_key="paraphrased_answer")
+        response = chain.invoke(prompt)
         
-        # Format results
-        formatted_results = [
-            {"text": result.page_content, "source": result.metadata.get("source")}
-            for result in results
-        ]
+        # Extract the paraphrased answer
+        paraphrased_answer = response["paraphrased_answer"]
         
-        return formatted_results
+        return paraphrased_answer
 
-
-    def rerank(self, hits: list, query: str):
-        print(hits)
-        # Flatten the list of hits
-        flat_hits = [item for sublist in hits for item in sublist]
-
-        # Extract content and sources from hits
-        content_list = [
-            {"text": hit["text"], "source": hit.get("source")}
-            for hit in flat_hits if "text" in hit and hit["text"]
-        ]
-
-        # Use a default separator if not defined in the reranker template
-        reranking_template = self._reranker.create_template(self.keep_top_k)
-        separator = "\n\n"  # Default separator
-        if hasattr(reranking_template, "separator"):
-            separator = reranking_template.separator
-
-        # Combine passages into a single string for processing
-        passages = separator.join([item["text"].strip() for item in content_list if item["text"].strip()])
-
-        # Create and run the chain
-        chain = GeneralChain().get_chain(
-            llm=self.llm, output_key="rerank", template=reranking_template
-        )
-        response = chain.invoke({"question": query, "passages": passages})
-
-        # Process the chain response to get reranked passages
-        result = response["rerank"]
-        reranked_passages = result.strip().split(separator)
-        reranked_passages = [item.strip() for item in reranked_passages if item.strip()]
-        print(reranked_passages)
-
-        # Identify the most relevant passage and its source
-        if reranked_passages:
-            best_answer_text = reranked_passages[0]
-            best_answer_source = next(
-                (item["source"] for item in content_list if item["text"].strip() == best_answer_text),
-                "."
-            )
-            return best_answer_text, best_answer_source
-        else:
-            return None, None  # Return None if no valid passages are found
-
-    
-    
-    def run_pipeline(self, query: str) -> dict:
+    def run_pipeline(self, query: str) -> str:
         # Retrieve the top-k relevant passages
         hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries)
         
-        # Get the best answer and its source from reranking
-        best_answer, best_answer_source = self.rerank(hits, query)
+        # Get the best answer from reranking
+        best_answer = self.reranker.rerank(query, hits)
         print(f"best answer: {best_answer}")
-        print(f"best source: {best_answer_source}")
         
-        # Prepare a clean result for display or further use
-        if best_answer and best_answer_source:
-            return {best_answer, best_answer_source}
+        # Paraphrase the best answer using LLM
+        if best_answer:
+            paraphrased_answer = self.paraphrase_answer(best_answer)
+            
+            # Format the paraphrased answer
+            formatted_answer = paraphrased_answer.strip()
+            
+            return formatted_answer
         else:
-            return {"answer": "No relevant passage found.", "source": "No source found."}
+            return "No relevant passage found."
 
 
     def identify_section(self, question):
