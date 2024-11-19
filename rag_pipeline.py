@@ -22,7 +22,7 @@ logger = get_logger(__name__)
             
 # session_manager = SessionManager()
 # api_key = session_manager.get_api_key()
-GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+GROQ_API_KEY = st.secrets["GROQ"]["GROQ_API_KEY"]
 
 llm = ChatGroq(groq_api_key=GROQ_API_KEY, model_name="Llama-3.1-70b-versatile")
 
