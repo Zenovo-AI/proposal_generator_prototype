@@ -4,6 +4,7 @@ from rag_pipeline import RAGPipeline
 from chat_bot import ChatBot
 import cryptography
 
+
 # Display the cryptography version
 st.write(f"Cryptography version: {cryptography.__version__}")
 
@@ -17,7 +18,6 @@ if 'chat_history' not in st.session_state:
 
 # Instantiate the DocumentProcessor
 process_document = DocumentProcessor()
-api_key = st.sidebar.text_input("Enter your Groq API KEY")
 
 def main():
     st.title("Hospital Policy Chat Bot")
