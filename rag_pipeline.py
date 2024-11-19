@@ -6,7 +6,6 @@ import structlog
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
-from document_processor import DocumentProcessor
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 
@@ -15,8 +14,6 @@ def get_logger(cls: str):
     return structlog.get_logger().bind(cls=cls)
 
 logger = get_logger(__name__)
-
-process_document = DocumentProcessor()
 
 # Base class for prompt templates
 class BasePromptTemplate(ABC, BaseModel):
