@@ -8,7 +8,6 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from session_manager import SessionManager
 from langchain_groq import ChatGroq
 
 
