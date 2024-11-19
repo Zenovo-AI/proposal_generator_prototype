@@ -198,6 +198,7 @@ class RAGPipeline:
     def __init__(self, vectordb, documents,
                  k=5, to_expand_to_n_queries=3, keep_top_k=1):
         self.faiss_index = vectordb
+        print(self.faiss_index)
         self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         self.documents = documents
         self.llm = llm
