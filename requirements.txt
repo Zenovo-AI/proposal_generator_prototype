@@ -22,4 +22,4 @@ langchain-huggingface
 pinecone
 langchain-groq
 torch
-PyPDF2
+faiss-cpu
