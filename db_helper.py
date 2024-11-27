@@ -22,6 +22,12 @@ def create_table(section):
     
     with conn:
         conn.execute(f"CREATE TABLE IF NOT EXISTS {table_name} (file_name TEXT)")
+        
+        
+# Function to initialize the database tables (for the first run)
+def initialize_database():
+    for section in SECTION_TO_TABLE_MAPPING.keys():
+        create_table(section)
 
 # Function to insert file metadata into database
 def insert_file_metadata(file_name, section):
