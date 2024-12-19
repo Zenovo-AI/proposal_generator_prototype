@@ -20,5 +20,4 @@ langchain-groq
 faiss-cpu
 openai
 langchain_openai
-python-magic-bin
 PyPDF2
