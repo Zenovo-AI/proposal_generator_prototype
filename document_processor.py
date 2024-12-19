@@ -70,35 +70,36 @@ class DocumentProcessor:
             logging.error(f"Error creating vector database: {e}")
             return None
 
-    def process_and_chunk_text(self, uploaded_files, web_url=None, section=None):
-        """Process uploaded files and/or a webpage URL, assign a section tag, and chunk the text."""
+    def process_and_chunk_text(self, input_data):
+        """
+        Process input data (plain text or file-like object) and chunk it into smaller pieces.
+        Args:
+            input_data (Union[str, List[BytesIO]]): Raw text or a list of file-like objects.
+        Returns:
+            Tuple: FAISS vector store and documents list.
+        """
         documents = []
-        for uploaded_file in uploaded_files:
-            file_bytes = uploaded_file.getvalue()  # Get the file content as bytes
-            
-            # Process based on file type
-            if uploaded_file.name.endswith(".pdf"):
-                tables = self.extract_tables_from_pdf(BytesIO(file_bytes))
-                text = self.process_pdf(BytesIO(file_bytes))
-                paragraphs = text.split('\n\n')
-                for paragraph in paragraphs:
-                    documents.append(Document(page_content=paragraph))
-                for table in tables:
-                    table_text = '\n'.join([str(row) for row in table])  # Convert table to string
-                    documents.append(Document(page_content=table_text))
-            elif uploaded_file.name.endswith('.txt'):
-                text = self.process_txt(file_bytes)
-                paragraphs = text.split('\n\n')
-                for paragraph in paragraphs:
-                    documents.append(Document(page_content=paragraph))
-            else:
-                continue
 
-        if web_url:
-            text = self.process_webpage(web_url)
-            paragraphs = text.split('\n\n')
+        # Handle plain text input
+        if isinstance(input_data, str):
+            paragraphs = input_data.split("\n\n")
             for paragraph in paragraphs:
-                documents.append(Document(page_content=paragraph))
+                documents.append(Document(page_content=paragraph.strip()))
+        elif isinstance(input_data, list):  # Handle file-like objects
+            for uploaded_file in input_data:
+                file_bytes = uploaded_file.getvalue()  # Get the file content as bytes
+                if uploaded_file.name.endswith(".pdf"):
+                    text = self.process_pdf(BytesIO(file_bytes))
+                    paragraphs = text.split("\n\n")
+                    for paragraph in paragraphs:
+                        documents.append(Document(page_content=paragraph.strip()))
+                elif uploaded_file.name.endswith(".txt"):
+                    text = self.process_txt(file_bytes)
+                    paragraphs = text.split("\n\n")
+                    for paragraph in paragraphs:
+                        documents.append(Document(page_content=paragraph.strip()))
 
+        # Create FAISS vector store
         vectordb = self.create_vectordb(documents)
         return vectordb, documents
+

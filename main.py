@@ -1,105 +1,259 @@
+# main.py
 import sqlite3
 import streamlit as st
+import traceback
+from chat_bot import ChatBot
+from db_helper import insert_file_metadata, delete_file, initialize_database, reload_session_state, get_uploaded_sections
 from document_processor import DocumentProcessor
 from rag_pipeline import RAGPipeline
-from chat_bot import ChatBot
-from db_helper import insert_file_metadata, delete_file, initialize_database
-import traceback
+from io import BytesIO
+import pdfplumber
+import numpy as np
+from PyPDF2 import PdfReader
+import faiss
 
 # Initialize document processor
 process_document = DocumentProcessor()
 
+# Dictionary mapping table names to section display names
 SECTION_KEYWORDS = {
-    "Request for Proposal (RFP) Document": "rfp_documents",
-    "Terms of Reference (ToR)": "tor_documents",
-    "Technical Evaluation Criteria": "evaluation_criteria_documents",
-    "Company and Team Profiles": "company_profiles_documents",
-    "Environmental and Social Standards": "social_standards_documents",
-    "Project History and Relevant Experience": "project_history_documents",
-    "Additional Requirements and Compliance Documents": "additional_requirements_documents",
+    "rfp_documents": "Request for Proposal (RFP) Document",
+    "tor_documents": "Terms of Reference (ToR)",
+    "evaluation_criteria_documents": "Technical Evaluation Criteria",
+    "company_profiles_documents": "Company and Team Profiles",
+    "social_standards_documents": "Environmental and Social Standards",
+    "project_history_documents": "Project History and Relevant Experience",
+    "additional_requirements_documents": "Additional Requirements and Compliance Documents",
 }
 
 
-def main():
-    # Initialize session state variables if not already initialized
-    if "chat_bot" not in st.session_state:
-        st.session_state.chat_bot = None  # Placeholder for ChatBot instance
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []  # To store chat history
-    if "section_embeddings" not in st.session_state:
-        st.session_state.section_embeddings = {}  # To store embeddings for sections
+def initialize_session_state():
+    if 'initialized' not in st.session_state:
+        initialize_database()
+        reload_session_state(process_document, SECTION_KEYWORDS)
+        st.session_state['initialized'] = True
 
-    # Initialize the database tables
-    initialize_database()
-    
+    if "chat_bot" not in st.session_state:
+        st.session_state.chat_bot = None
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+    if "section_embeddings" not in st.session_state:
+        st.session_state.section_embeddings = {}
+
+
+def initialize_faiss_vector_store_in_memory():
+    # Create a FAISS index in-memory with a given dimension (e.g., 768 for embeddings from models like MiniLM)
+    dim = 768  # Set the dimensionality based on your embeddings (e.g., for sentence-transformers/all-MiniLM-L6-v2)
+    index = faiss.IndexFlatL2(dim)  # Use a simple L2 distance index for vector similarity
+    return index
+
+def is_supported_file_format(file_name):
+    supported_formats = ['.txt', '.pdf', '.docx', '.csv']  # Extend with your supported formats
+    return any(file_name.endswith(ext) for ext in supported_formats)
+
+# Function to extract text from a PDF stored in the database
+def extract_pdf_from_db(file_name, section):
+    """
+    Retrieve and process PDF content from the database.
+    Args:
+        file_name (str): Name of the PDF file in the database.
+        section (str): Section/table where the file is stored.
+    Returns:
+        str: Extracted text content from the PDF.
+    """
+    conn = sqlite3.connect("files.db")
+    cursor = conn.cursor()
+    try:
+        # Retrieve binary content of the file
+        cursor.execute(f"SELECT file_content FROM {section} WHERE file_name = ?", (file_name,))
+        result = cursor.fetchone()
+        if not result:
+            raise ValueError(f"File '{file_name}' not found in section '{section}'.")
+
+        file_content = result[0]  # Retrieve the binary PDF content
+
+        # Process the binary content with pdfplumber
+        try:
+            with pdfplumber.open(BytesIO(file_content)) as pdf:
+                text = ""
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:  # Only add non-empty pages
+                        text += page_text + "\n"
+                        print(f"PDFplumber text: {text}")
+                if text.strip():
+                    return text.strip()
+        except Exception as e:
+            print(f"Error using pdfplumber: {e}")
+
+        # Fallback to PyPDF2 if pdfplumber fails
+        print("Falling back to PyPDF2...")
+        reader = PdfReader(BytesIO(file_content))
+        text = ""
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text
+                print(text)
+        return text.strip()
+
+    except Exception as e:
+        print(f"Error extracting PDF content from the database: {e}")
+        return None
+    finally:
+        conn.close()
+
+# Function to process all files in a section
+def process_all_files_in_section(section):
+    """
+    Process all files in the given section by extracting text and creating embeddings.
+    Args:
+        section (str): The section (table name) to process files from.
+    """
+    conn = sqlite3.connect("files.db", check_same_thread=False)
+    cursor = conn.cursor()
+    try:
+        # Fetch all files in the section
+        cursor.execute(f"SELECT file_name, file_content FROM {section}")
+        files = cursor.fetchall()
+
+        if files:
+            for file_name, file_content in files:
+                # Extract text content from the database
+                text_content = extract_pdf_from_db(file_name, section)
+                if not text_content:
+                    st.warning(f"Unable to extract content from file: {file_name}. Skipping.")
+                    continue
+
+                # Process extracted text to generate embeddings
+                try:
+                    # Directly process text to documents
+                    vectordb, documents = process_document.process_and_chunk_text(text_content)
+
+                    # Initialize or update FAISS index
+                    if section not in st.session_state.get("section_embeddings", {}):
+                        # Initialize FAISS index in session state
+                        st.session_state.section_embeddings = {}
+                        st.session_state.section_embeddings[section] = (vectordb, documents)
+                    else:
+                        # Merge new embeddings into existing FAISS index
+                        existing_vectordb, existing_docs = st.session_state.section_embeddings[section]
+                        new_vectordb, new_docs = process_document.process_and_chunk_text(text_content)
+                        faiss.normalize_L2(new_vectordb.index)  # Normalize embeddings
+                        existing_vectordb.merge_from(new_vectordb)  # Merge the FAISS indexes
+                        st.session_state.section_embeddings[section] = (
+                            existing_vectordb,
+                            existing_docs + new_docs,
+                        )
+
+                except Exception as e:
+                    st.error(f"Error processing embeddings for file {file_name}: {e}")
+                    traceback.print_exc()
+
+            st.success(f"Embeddings for all files in section '{SECTION_KEYWORDS.get(section, section)}' have been processed.")
+        else:
+            st.warning(f"No files found in section '{SECTION_KEYWORDS.get(section, section)}'.")
+    except Exception as e:
+        st.error(f"Error processing files in section '{SECTION_KEYWORDS.get(section, section)}': {e}")
+        traceback.print_exc()
+    finally:
+        conn.close()
+
+
+
+# Main Streamlit app
+def main():
+    initialize_session_state()
     st.title("Proposal and Chatbot System")
 
-    # Initialize database connection
-    conn = sqlite3.connect('files.db', check_same_thread=False)
-    cursor = conn.cursor()
-
     # Sidebar: Section Selection
-    section = st.sidebar.selectbox(
-        "Select a document section:",
-        options=list(SECTION_KEYWORDS.keys())
-    )
-    table_name = SECTION_KEYWORDS[section]
-    
-    # Sidebar: File Uploader
-    uploaded_files = st.sidebar.file_uploader(
-        f"Upload files to the '{section}' section",
-        type=["pdf", "txt"],
-        accept_multiple_files=True,
-    )
-    web_url = st.sidebar.text_input("Enter URL of policy webpage")
+    sections = list(SECTION_KEYWORDS.values())
+    uploaded_sections = get_uploaded_sections(SECTION_KEYWORDS)
+    default_section = uploaded_sections[0] if uploaded_sections else sections[0]
 
-    # Handle File Upload
-    if uploaded_files or web_url:
+    section = st.sidebar.selectbox("Select a document section:", options=sections, index=sections.index(default_section))
+    table_name = next((key for key, value in SECTION_KEYWORDS.items() if value == section), None)
+    
+    if not table_name:
+        st.error("No table mapping found for section")
+        return
+
+    # Sidebar: File Uploader
+    uploaded_files = st.sidebar.file_uploader(f"Upload files to the '{section}' section", type=["pdf", "txt"], accept_multiple_files=True)
+
+    if uploaded_files:
         with st.spinner("Processing and uploading files..."):
             try:
                 for file in uploaded_files:
-                    # Check if the file already exists in the database
+                    conn = sqlite3.connect("files.db", check_same_thread=False)
+                    cursor = conn.cursor()
                     cursor.execute(f"SELECT file_name FROM {table_name} WHERE file_name = ?", (file.name,))
                     existing_file = cursor.fetchone()
 
                     if existing_file:
-                        st.sidebar.error(f"File '{file.name}' already exists in the '{section}' section.")
+                        st.sidebar.info(f"File '{file.name}' already exists in the '{section}' section.")
                     else:
-                        # Insert file metadata into the database
-                        insert_file_metadata(file.name, section)
+                        file_content = file.read()
+                        insert_file_metadata(file.name, table_name, file_content)
 
-                    # Process and chunk text if section embeddings are not available
-                    if section in st.session_state.section_embeddings:
-                        vectordb, documents = st.session_state.section_embeddings[section]
-                    else:
-                        vectordb, documents = process_document.process_and_chunk_text(uploaded_files, web_url, section)
-
-                    # Initialize chatbot if not already initialized
-                    if not st.session_state.chat_bot:
-                        st.session_state.chat_bot = ChatBot(RAGPipeline(vectordb, documents))
-                        st.success(f"File '{file.name}' uploaded and processed successfully!")
-
+                        st.success(f"File '{file.name}' uploaded successfully!")
+                st.session_state.uploaded_sections.add(section)
             except Exception as e:
                 st.error(f"Error processing files: {e}")
                 traceback.print_exc()
 
+    # Chat Section
+    st.header("Chat with the Bot")
+    user_input = st.text_input("Ask your question:")
 
-    # Display Uploaded Files and Delete Option
+    try:
+        if st.button("Send"):
+            with st.spinner("Processing embeddings for all files in the selected section..."):
+                process_all_files_in_section(table_name)
+
+        if table_name in st.session_state.section_embeddings:
+            vectordb, documents = st.session_state.section_embeddings[table_name]
+            st.session_state.chat_bot = ChatBot(RAGPipeline(vectordb, documents))
+
+        if user_input and st.session_state.chat_bot:
+            response = st.session_state.chat_bot.get_response(user_input)
+            st.write("Bot:", response)
+            
+    except Exception as e:
+        st.error(f"Failed to initialize chatbot: {e}")
+        traceback.print_exc()
+
+    if user_input.strip():
+        try:
+            response = st.session_state.chat_bot.get_response(user_input)
+            st.session_state.chat_history.append(("You", user_input))
+            st.session_state.chat_history.append(("Bot", response))
+            st.write("### Chat History")
+            for role, message in st.session_state.chat_history[-10:]:
+                st.write(f"**{role}:** {message}")
+        except Exception as e:
+            st.error(f"Error during chatbot interaction: {e}")
+    else:
+        st.info("Upload or process files for this section to enable chatting.")
+
+
     st.sidebar.write("### Uploaded Files")
     try:
+        conn = sqlite3.connect("files.db", check_same_thread=False)
+        cursor = conn.cursor()
         cursor.execute(f"SELECT file_name FROM {table_name};")
         uploaded_files_list = [file[0] for file in cursor.fetchall()]
-        
+
         if uploaded_files_list:
             for file_name in uploaded_files_list:
-                delete_key = f"delete_{section}_{file_name}"
+                delete_key = f"delete_{table_name}_{file_name}"
                 col1, col2 = st.sidebar.columns([3, 1])
                 with col1:
                     st.sidebar.write(file_name)
                 with col2:
                     if st.sidebar.button("Delete", key=delete_key):
                         try:
-                            delete_file(file_name, section)
+                            delete_file(file_name, table_name)
                             st.sidebar.success(f"File '{file_name}' deleted successfully!")
                         except Exception as e:
                             st.error(f"Failed to delete file '{file_name}': {e}")
@@ -107,29 +261,20 @@ def main():
             st.sidebar.info("No files uploaded for this section.")
     except Exception as e:
         st.sidebar.error(f"Failed to retrieve files: {e}")
+        
+    # Track uploaded sections
+    # --- Sidebar: Breadcrumb Display ---
+    if "uploaded_sections" not in st.session_state:
+        st.session_state.uploaded_sections = set()
 
-    # Chatbot Functionality
-    try:
-        cursor.execute(f"SELECT file_name FROM {table_name};")
-        uploaded_files_list = [file[0] for file in cursor.fetchall()]
-        if uploaded_files_list:
-            st.header("Chat with the Bot")
-            user_input = st.text_input("Ask your question:")
-            if st.button("Send"):
-                if user_input.strip():
-                    try:
-                        response = st.session_state.chat_bot.get_response(user_input)
-                        st.session_state.chat_history.append(("You", user_input))
-                        st.session_state.chat_history.append(("Bot", response))
-                        st.write("### Chat History")
-                        for role, message in st.session_state.chat_history[-10:]:
-                            st.write(f"**{role}:** {message}")
-                    except Exception as e:
-                        st.error(f"Error during chatbot interaction: {e}")
-        else:
-            st.info("Upload files for this section to enable chatting.")
-    except Exception as e:
-        st.error(f"Failed to set up chatbot: {e}")
+    if uploaded_files:
+        st.session_state.uploaded_sections.add(section)
+
+    if st.session_state.uploaded_sections:
+        breadcrumb_text = " > ".join(sorted(st.session_state.uploaded_sections))
+        st.sidebar.info(f"📂 Sections with uploads: {breadcrumb_text}")
+
+
 
 if __name__ == "__main__":
     main()

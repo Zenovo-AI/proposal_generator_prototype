@@ -8,7 +8,8 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
+from utils import create_empty_vectordb
 
 
 
@@ -19,13 +20,13 @@ def get_logger(cls: str):
 logger = get_logger(__name__)
 
 
-            
-# session_manager = SessionManager()
-# api_key = session_manager.get_api_key()
-GROQ_API_KEY = st.secrets["GROQ"]["GROQ_API_KEY"]
-model_name = "Llama-3.1-70b-versatile"
+openai_apikey = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
-llm = ChatGroq(groq_api_key=GROQ_API_KEY, model_name=model_name)
+llm = ChatOpenAI(
+    model="gpt-4",
+    openai_api_key=openai_apikey
+    
+)
 
 
 # Base class for prompt templates
@@ -195,71 +196,68 @@ class Reranker:
 
 # RAG Pipeline Class
 class RAGPipeline:
-    def __init__(self, vectordb, documents,
-                 k=5, to_expand_to_n_queries=3, keep_top_k=1):
+    def __init__(self, vectordb, documents, k=5, to_expand_to_n_queries=3, keep_top_k=1):
+        if vectordb is None or not hasattr(vectordb, "similarity_search_with_score"):
+            print("No valid FAISS vector store provided. Initializing with placeholder.")
+            vectordb = create_empty_vectordb()
+        
         self.faiss_index = vectordb
-        self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         self.documents = documents
-        self.llm = llm
         self.k = k
         self.to_expand_to_n_queries = to_expand_to_n_queries
         self.keep_top_k = keep_top_k
         self._query_expander = QueryExpansion()
         self._metadata_extractor = SelfQuery()
         self.reranker = Reranker()
-        self._embedder = HuggingFaceEmbeddings()
-        # Initialize the executor for asynchronous task submission
-        self._executor = concurrent.futures.ThreadPoolExecutor()
+        self.llm = llm
 
-    
-    def retrieve_top_k(self, query: str, k: int, to_expand_to_n_queries: int):
-        # Perform query expansion
-        expanded_queries = self._query_expander.generate_response(query, to_expand_to_n_queries)
-        print(f"Expanded Queries: {expanded_queries}")
-        
-        # Retrieve documents using FAISS index for each expanded query
+
+        # Validate the faiss_index
+        if self.faiss_index is None or not hasattr(self.faiss_index, "similarity_search_with_score"):
+            raise ValueError("The provided vector database is invalid or does not support `similarity_search_with_score`.")
+
+    def retrieve_top_k(self, query: str) -> list:
+        """Retrieve top-k relevant documents from the vector database."""
+        if not hasattr(self.faiss_index, "similarity_search_with_score"):
+            raise ValueError("The vector database does not implement `similarity_search_with_score`.")
+
+        # Expand the query
+        expanded_queries = self._query_expander.generate_response(query, self.to_expand_to_n_queries)
+
+        # Retrieve results for each expanded query
         results = []
         for expanded_query in expanded_queries:
-            result = self.faiss_index.similarity_search_with_score(expanded_query, k=k)
-            results.extend(result)
-        
-        print(f"Debug: _search_single_query called with expanded queries={expanded_queries}")
+            if hasattr(self.faiss_index, "similarity_search_with_score"):
+                results.extend(self.faiss_index.similarity_search_with_score(expanded_query, k=self.k))
+            else:
+                print(f"Warning: The vector database doesn't support similarity search for query `{expanded_query}`.")
+
         return results
 
     def paraphrase_answer(self, answer: str) -> str:
-        # Create a prompt template
+        """Paraphrase the answer using the LLM."""
         template = PromptTemplate(
             input_variables=["text"],
             template="Please condense and rephrase the following text to answer the question clearly and concisely. NO PREAMBLE and NO NEW QUESTION, JUST PARAPHRASE THE ANSWER: {text}",
         )
-        
-        # Create a prompt dictionary with the correct format
         prompt = {"text": answer}
-        
-        # Get the LLM response
         chain = GeneralChain().get_chain(llm=self.llm, template=template, output_key="paraphrased_answer")
         response = chain.invoke(prompt)
-        
-        # Extract the paraphrased answer
-        paraphrased_answer = response["paraphrased_answer"]
-        
-        return paraphrased_answer
+        return response.get("paraphrased_answer", answer)
 
     def run_pipeline(self, query: str) -> str:
-        # Retrieve the top-k relevant passages
-        hits = self.retrieve_top_k(query, self.k, self.to_expand_to_n_queries)
-        
-        # Get the best answer from reranking
+        """Run the RAG pipeline to get the final response."""
+        # Retrieve relevant passages
+        hits = self.retrieve_top_k(query)
+
+        if not hits:
+            return "No relevant passages found."
+
+        # Rerank the hits
         best_answer = self.reranker.rerank(query, hits)
-        print(f"best answer: {best_answer}")
-        
-        # Paraphrase the best answer using LLM
-        if best_answer:
-            paraphrased_answer = self.paraphrase_answer(best_answer)
-            
-            # Format the paraphrased answer
-            formatted_answer = paraphrased_answer.strip()
-            
-            return formatted_answer
-        else:
-            return "No relevant passage found."
+
+        if not best_answer:
+            return "Unable to find a relevant answer."
+
+        # Paraphrase the best answer
+        return self.paraphrase_answer(best_answer)
