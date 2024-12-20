@@ -1,4 +1,3 @@
-# main.py
 import sqlite3
 import streamlit as st
 import traceback
@@ -41,17 +40,11 @@ def initialize_session_state():
         st.session_state.section_embeddings = {}
 
 
-def initialize_faiss_vector_store_in_memory():
-    # Create a FAISS index in-memory with a given dimension (e.g., 768 for embeddings from models like MiniLM)
-    dim = 768  # Set the dimensionality based on your embeddings (e.g., for sentence-transformers/all-MiniLM-L6-v2)
-    index = faiss.IndexFlatL2(dim)  # Use a simple L2 distance index for vector similarity
-    return index
-
 def is_supported_file_format(file_name):
     supported_formats = ['.txt', '.pdf', '.docx', '.csv']  # Extend with your supported formats
     return any(file_name.endswith(ext) for ext in supported_formats)
 
-# Function to extract text from a PDF stored in the database
+
 def extract_pdf_from_db(file_name, section):
     """
     Retrieve and process PDF content from the database.
@@ -64,46 +57,28 @@ def extract_pdf_from_db(file_name, section):
     conn = sqlite3.connect("files.db")
     cursor = conn.cursor()
     try:
-        # Retrieve binary content of the file
         cursor.execute(f"SELECT file_content FROM {section} WHERE file_name = ?", (file_name,))
         result = cursor.fetchone()
         if not result:
             raise ValueError(f"File '{file_name}' not found in section '{section}'.")
 
-        file_content = result[0]  # Retrieve the binary PDF content
-
-        # Process the binary content with pdfplumber
-        try:
-            with pdfplumber.open(BytesIO(file_content)) as pdf:
-                text = ""
-                for page in pdf.pages:
-                    page_text = page.extract_text()
-                    if page_text:  # Only add non-empty pages
-                        text += page_text + "\n"
-                        print(f"PDFplumber text: {text}")
-                if text.strip():
-                    return text.strip()
-        except Exception as e:
-            print(f"Error using pdfplumber: {e}")
-
-        # Fallback to PyPDF2 if pdfplumber fails
-        print("Falling back to PyPDF2...")
-        reader = PdfReader(BytesIO(file_content))
-        text = ""
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text
-                print(text)
-        return text.strip()
+        file_content = result[0]
+        with pdfplumber.open(BytesIO(file_content)) as pdf:
+            text = ""
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
+            if text.strip():
+                return text.strip()
 
     except Exception as e:
-        print(f"Error extracting PDF content from the database: {e}")
+        print(f"Error extracting PDF content: {e}")
         return None
     finally:
         conn.close()
 
-# Function to process all files in a section
+
 def process_all_files_in_section(section):
     """
     Process all files in the given section by extracting text and creating embeddings.
@@ -113,37 +88,31 @@ def process_all_files_in_section(section):
     conn = sqlite3.connect("files.db", check_same_thread=False)
     cursor = conn.cursor()
     try:
-        # Fetch all files in the section
         cursor.execute(f"SELECT file_name, file_content FROM {section}")
         files = cursor.fetchall()
 
         if files:
             for file_name, file_content in files:
-                # Extract text content from the database
                 text_content = extract_pdf_from_db(file_name, section)
                 if not text_content:
                     st.warning(f"Unable to extract content from file: {file_name}. Skipping.")
                     continue
 
-                # Process extracted text to generate embeddings
                 try:
-                    # Directly process text to documents
                     vectordb, documents = process_document.process_and_chunk_text(text_content)
 
-                    # Initialize or update FAISS index
+                    embeddings = np.array([vectordb.index.reconstruct(i) for i in range(vectordb.index.ntotal)])
+                    faiss.normalize_L2(embeddings)
+
                     if section not in st.session_state.get("section_embeddings", {}):
-                        # Initialize FAISS index in session state
                         st.session_state.section_embeddings = {}
                         st.session_state.section_embeddings[section] = (vectordb, documents)
                     else:
-                        # Merge new embeddings into existing FAISS index
                         existing_vectordb, existing_docs = st.session_state.section_embeddings[section]
-                        new_vectordb, new_docs = process_document.process_and_chunk_text(text_content)
-                        faiss.normalize_L2(new_vectordb.index)  # Normalize embeddings
-                        existing_vectordb.merge_from(new_vectordb)  # Merge the FAISS indexes
+                        existing_vectordb.merge_from(vectordb)
                         st.session_state.section_embeddings[section] = (
                             existing_vectordb,
-                            existing_docs + new_docs,
+                            existing_docs + documents,
                         )
 
                 except Exception as e:
@@ -160,25 +129,21 @@ def process_all_files_in_section(section):
         conn.close()
 
 
-
-# Main Streamlit app
 def main():
     initialize_session_state()
     st.title("Proposal and Chatbot System")
 
-    # Sidebar: Section Selection
     sections = list(SECTION_KEYWORDS.values())
     uploaded_sections = get_uploaded_sections(SECTION_KEYWORDS)
     default_section = uploaded_sections[0] if uploaded_sections else sections[0]
 
     section = st.sidebar.selectbox("Select a document section:", options=sections, index=sections.index(default_section))
     table_name = next((key for key, value in SECTION_KEYWORDS.items() if value == section), None)
-    
+
     if not table_name:
         st.error("No table mapping found for section")
         return
 
-    # Sidebar: File Uploader
     uploaded_files = st.sidebar.file_uploader(f"Upload files to the '{section}' section", type=["pdf", "txt"], accept_multiple_files=True)
 
     if uploaded_files:
@@ -195,47 +160,40 @@ def main():
                     else:
                         file_content = file.read()
                         insert_file_metadata(file.name, table_name, file_content)
-
                         st.success(f"File '{file.name}' uploaded successfully!")
-                st.session_state.uploaded_sections.add(section)
             except Exception as e:
                 st.error(f"Error processing files: {e}")
                 traceback.print_exc()
 
-    # Chat Section
     st.header("Chat with the Bot")
     user_input = st.text_input("Ask your question:")
 
-    try:
-        if st.button("Send"):
-            with st.spinner("Processing embeddings for all files in the selected section..."):
+    if st.button("Send"):
+        with st.spinner("Processing all files in the selected section..."):
+            try:
                 process_all_files_in_section(table_name)
+            except Exception as e:
+                st.error(f"Error processing files for section '{section}': {e}")
+                traceback.print_exc()
 
         if table_name in st.session_state.section_embeddings:
             vectordb, documents = st.session_state.section_embeddings[table_name]
             st.session_state.chat_bot = ChatBot(RAGPipeline(vectordb, documents))
 
-        if user_input and st.session_state.chat_bot:
-            response = st.session_state.chat_bot.get_response(user_input)
-            st.write("Bot:", response)
-            
-    except Exception as e:
-        st.error(f"Failed to initialize chatbot: {e}")
-        traceback.print_exc()
+        if user_input.strip() and st.session_state.chat_bot:
+            try:
+                response = st.session_state.chat_bot.get_response(user_input)
+                st.session_state.chat_history.append(("You", user_input))
+                st.session_state.chat_history.append(("Bot", response))
+            except Exception as e:
+                st.error(f"Error during chatbot interaction: {e}")
+        else:
+            st.info("Upload or process files for this section to enable chatting.")
 
-    if user_input.strip():
-        try:
-            response = st.session_state.chat_bot.get_response(user_input)
-            st.session_state.chat_history.append(("You", user_input))
-            st.session_state.chat_history.append(("Bot", response))
-            st.write("### Chat History")
-            for role, message in st.session_state.chat_history[-10:]:
-                st.write(f"**{role}:** {message}")
-        except Exception as e:
-            st.error(f"Error during chatbot interaction: {e}")
-    else:
-        st.info("Upload or process files for this section to enable chatting.")
-
+    if st.session_state.chat_history:
+        st.write("### Chat History")
+        for role, message in st.session_state.chat_history[-10:]:
+            st.write(f"**{role}:** {message}")
 
     st.sidebar.write("### Uploaded Files")
     try:
@@ -273,8 +231,6 @@ def main():
     if st.session_state.uploaded_sections:
         breadcrumb_text = " > ".join(sorted(st.session_state.uploaded_sections))
         st.sidebar.info(f"📂 Sections with uploads: {breadcrumb_text}")
-
-
 
 if __name__ == "__main__":
     main()
