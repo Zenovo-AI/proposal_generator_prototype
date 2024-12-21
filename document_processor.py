@@ -4,6 +4,8 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 import pdfplumber
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.docstore.document import Document
 import trafilatura
 from utils import clean_text
 import logging
@@ -25,6 +27,22 @@ class DocumentProcessor:
     def __init__(self):
         if "section_embeddings" not in st.session_state:
             st.session_state.section_embeddings = {}  # Store embeddings for each section
+            
+    def chunk_text_semantically(self, text, chunk_size=2000, chunk_overlap=200):
+        """
+        Chunk text into smaller pieces while preserving semantic coherence.
+        Args:
+            text (str): The text to chunk.
+            chunk_size (int): Maximum size of each chunk.
+            chunk_overlap (int): Overlap between chunks to preserve context.
+        Returns:
+            List[str]: List of text chunks.
+        """
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+        return text_splitter.split_text(text)
 
     def process_pdf(self, pdf_file):
         """Extract text from a PDF file using pdfplumber, maintaining paragraph structure."""
@@ -82,22 +100,21 @@ class DocumentProcessor:
 
         # Handle plain text input
         if isinstance(input_data, str):
-            paragraphs = input_data.split("\n\n")
-            for paragraph in paragraphs:
-                documents.append(Document(page_content=paragraph.strip()))
+            chunks = self.chunk_text_semantically(input_data)
+            documents = [Document(page_content=chunk.strip()) for chunk in chunks]
+
         elif isinstance(input_data, list):  # Handle file-like objects
             for uploaded_file in input_data:
                 file_bytes = uploaded_file.getvalue()  # Get the file content as bytes
                 if uploaded_file.name.endswith(".pdf"):
                     text = self.process_pdf(BytesIO(file_bytes))
-                    paragraphs = text.split("\n\n")
-                    for paragraph in paragraphs:
-                        documents.append(Document(page_content=paragraph.strip()))
                 elif uploaded_file.name.endswith(".txt"):
                     text = self.process_txt(file_bytes)
-                    paragraphs = text.split("\n\n")
-                    for paragraph in paragraphs:
-                        documents.append(Document(page_content=paragraph.strip()))
+                else:
+                    continue
+
+                chunks = self.chunk_text_semantically(text)
+                documents.extend([Document(page_content=chunk.strip()) for chunk in chunks])
 
         # Create FAISS vector store
         vectordb = self.create_vectordb(documents)
