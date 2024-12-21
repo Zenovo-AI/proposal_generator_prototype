@@ -8,7 +8,7 @@ from rag_pipeline import RAGPipeline
 from io import BytesIO
 import pdfplumber
 import numpy as np
-from PyPDF2 import PdfReader
+import time
 import faiss
 
 # Initialize document processor
@@ -118,8 +118,10 @@ def process_all_files_in_section(section):
                 except Exception as e:
                     st.error(f"Error processing embeddings for file {file_name}: {e}")
                     traceback.print_exc()
-
-            st.success(f"Embeddings for all files in section '{SECTION_KEYWORDS.get(section, section)}' have been processed.")
+            placeholder = st.empty()
+            placeholder.success(f"Embeddings for all files in section '{SECTION_KEYWORDS.get(section, section)}' have been processed.")
+            time.sleep(3)
+            placeholder.empty()
         else:
             st.warning(f"No files found in section '{SECTION_KEYWORDS.get(section, section)}'.")
     except Exception as e:
