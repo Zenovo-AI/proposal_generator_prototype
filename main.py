@@ -15,16 +15,14 @@ import gc
 
 
 
-
-
 nest_asyncio.apply()
 
 # Create a temporary directory
 working_dir = tempfile.mkdtemp()
 
 
-openai_apikey = st.secrets["OPENAI_API_KEY"]
-google_apikey = st.secrets["GOOGLE_AI_API_KEY"]
+openai_apikey = st.secrets["OPENAI"]["OPENAI_API_KEY"]
+google_apikey = st.secrets["[GOOGLE]"]["GOOGLE_AI_API_KEY"]
 
 genai.configure(api_key=google_apikey)
 
