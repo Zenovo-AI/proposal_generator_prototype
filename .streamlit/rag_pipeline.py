@@ -1,9 +1,7 @@
-import concurrent.futures
 import streamlit as st
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 import structlog
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.llm import LLMChain
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -38,12 +36,13 @@ class BasePromptTemplate(ABC, BaseModel):
 
 # Query Expansion Template
 class QueryExpansionTemplate(BasePromptTemplate):
-    prompt: str = """You are an AI language model assistant. Your task is to generate {to_expand_to_n}
-    different versions of the given user question to retrieve relevant documents from a vector
-    database. By generating multiple perspectives on the user question, your goal is to help
-    the user overcome some of the limitations of the distance-based similarity search.
-    Provide these alternative questions separated by '{separator}'.
-    Original question: {question}"""
+    prompt: str = """You are an AI assistant helping to retrieve documents from a vector database. Generate {to_expand_to_n} variations of the given query to improve retrieval accuracy. Include:
+    1. Queries that rephrase the original while keeping the intent.
+    2. Domain-specific synonyms or related terms.
+    3. Variations that include specific entities, contexts, or key phrases.
+    Provide these queries separated by '{separator}'.
+    Original query: {question}"""
+
 
     def create_template(self, to_expand_to_n: int) -> PromptTemplate:
         return PromptTemplate(
@@ -133,6 +132,7 @@ class QueryExpansion:
         stripped_queries = [
             stripped_item for item in queries if (stripped_item := item.strip())
         ]
+        print(stripped_queries)
 
         return stripped_queries
 
@@ -157,8 +157,8 @@ class SelfQuery:
 
 class Reranker:
     def __init__(self):
-        self.tokenizer = AutoTokenizer.from_pretrained("cross-encoder/stsb-distilroberta-base")
-        self.model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/stsb-distilroberta-base")
+        self.tokenizer = AutoTokenizer.from_pretrained("cross-encoder/ms-marco-MiniLM-L-6-v2")
+        self.model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
     def rerank(self, query: str, hits: list):
         # Prepare inputs for the model
@@ -185,7 +185,6 @@ class Reranker:
         # Combine hits with scores and sort
         hits_with_scores = list(zip(hits, scores))  # Use the original hit tuples
         hits_with_scores.sort(key=lambda x: x[1], reverse=True)
-        print(hits_with_scores)
 
         # Identify the most relevant passage
         if hits_with_scores:
@@ -238,7 +237,7 @@ class RAGPipeline:
         """Paraphrase the answer using the LLM."""
         template = PromptTemplate(
             input_variables=["text"],
-            template="Please condense and rephrase the following text to answer the question clearly and concisely. NO PREAMBLE and NO NEW QUESTION, JUST PARAPHRASE THE ANSWER: {text}",
+            template="Please reformat the following response to ensure it is clear, structured, and professional. Use headings, bullet points, and a logical layout to organize the information effectively. Remove any unnecessary details, such as irrelevant introductory information like 'Vienna International Centre Address: P. O. Box 1200, A-1400 Vienna, Austria Website: www.ctbto.org' or footer references like 'Page 1 of 6.' Retain all critical details, ensure grammatical correctness, and make the content easy to read: {text}",
         )
         prompt = {"text": answer}
         chain = GeneralChain().get_chain(llm=self.llm, template=template, output_key="paraphrased_answer")
@@ -261,3 +260,5 @@ class RAGPipeline:
 
         # Paraphrase the best answer
         return self.paraphrase_answer(best_answer)
+
+

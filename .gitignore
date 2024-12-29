@@ -162,11 +162,11 @@ cython_debug/
 #.idea/
 
 # Add this line
-uploaded_files/
-.streamlit/secrets.toml
+uploaded_files
+.streamlit
 
 <<<<<<< HEAD
 data/
 =======
 >>>>>>> 279f671791252a8d1baaea76552610f0e766398a
-files.db/
+files.db

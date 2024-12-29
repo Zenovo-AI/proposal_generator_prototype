@@ -46,6 +46,7 @@ def insert_file_metadata(file_name, section, file_content):
             VALUES (?, ?);
         """, (file_name, file_content))
         conn.commit()
+        print(f"File {file_name} inserted successfully into {table_name}.")
     except sqlite3.IntegrityError:
         print(f"File {file_name} already exists in the database.")
     except Exception as e:
