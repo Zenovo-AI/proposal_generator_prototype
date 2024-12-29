@@ -11,7 +11,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-openai_apikey = st.secrets["OPENAI_API_KEY"]
+openai_apikey = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 
 class DocumentProcessor:
