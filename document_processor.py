@@ -6,12 +6,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 import fitz  # PyMuPDF for text extraction
 import trafilatura
 from utils import clean_text
-import openai
 import logging
 
 logging.basicConfig(level=logging.INFO)
-
-openai_apikey = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 
 class DocumentProcessor:
