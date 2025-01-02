@@ -1,7 +1,7 @@
 import sqlite3
 import streamlit as st
 from document_processor import DocumentProcessor
-from utils import create_empty_vectordb
+# from utils import create_empty_vectordb
 
 # Initialize document processor
 process_document = DocumentProcessor()
