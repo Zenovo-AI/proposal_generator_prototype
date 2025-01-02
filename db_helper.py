@@ -103,8 +103,8 @@ def reload_session_state(process_document, section_keywords):
                 print(f"Embeddings for {display_name} reloaded successfully.")
             else:
                 print(f"No files uploaded for {display_name}. Initializing empty FAISS index.")
-                empty_vectordb = create_empty_vectordb()
-                st.session_state.section_embeddings[table_name] = (empty_vectordb, [])
+                # empty_vectordb = create_empty_vectordb()
+                # st.session_state.section_embeddings[table_name] = (empty_vectordb, [])
         except Exception as e:
             print(f"Error reloading section {display_name}: {e}")
     conn.close()
