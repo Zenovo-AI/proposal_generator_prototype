@@ -10,15 +10,8 @@ import google.generativeai as genai
 import fitz
 import time
 import tempfile
-import nest_asyncio
 import gc
 import openai
-
-openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
-
-
-
-nest_asyncio.apply()
 
 # Create a temporary directory
 working_dir = tempfile.mkdtemp()
@@ -143,6 +136,9 @@ def process_all_files_in_section(section):
     Process all files in the given section by extracting text, creating embeddings,
     and inserting the content into GraphRAG for entity extraction and auto-query generation.
     """
+
+    openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
+    
     try:
         conn = sqlite3.connect("files.db", check_same_thread=False)
         cursor = conn.cursor()
