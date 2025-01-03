@@ -12,6 +12,9 @@ import time
 import tempfile
 import nest_asyncio
 import gc
+import openai
+
+openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 
 
