@@ -7,6 +7,9 @@ import fitz  # PyMuPDF for text extraction
 import trafilatura
 from utils import clean_text
 import logging
+import openai
+
+openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 logging.basicConfig(level=logging.INFO)
 
