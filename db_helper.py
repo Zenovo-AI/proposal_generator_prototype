@@ -2,6 +2,9 @@ import sqlite3
 import streamlit as st
 from document_processor import DocumentProcessor
 from utils import create_empty_vectordb
+import openai
+
+openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 # Initialize document processor
 process_document = DocumentProcessor()
