@@ -1,6 +1,9 @@
 import google.generativeai as genai
 import textwrap
 import json
+import openai
+
+openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 model = genai.GenerativeModel(model_name="models/gemini-1.5-flash")
 
