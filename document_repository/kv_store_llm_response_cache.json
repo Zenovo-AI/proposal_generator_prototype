@@ -353,6 +353,22 @@
       "embedding_min": null,
       "embedding_max": null,
       "original_prompt": "write a proposal based on RFQ?"
+    },
+    "eaa0cf411b0d0c83879551242759d63d": {
+      "return": "{\"high_level_keywords\": [\"Requirements\", \"Proposal\", \"RFQ\"], \"low_level_keywords\": [\"Request for Quotation\", \"Submission guidelines\", \"Evaluation criteria\", \"Documentation\", \"Deadline\"]}",
+      "embedding": null,
+      "embedding_shape": null,
+      "embedding_min": null,
+      "embedding_max": null,
+      "original_prompt": "What are the requirements for proposal listed in the RFQ?"
+    },
+    "0879a2d5917486d34b62d40d04044975": {
+      "return": "In the **Request For Quotation No. 2024-108** issued by the Commission, several key requirements and conditions are outlined for submitting proposals. Here is a detailed overview:\n\n### Submission Format and Requirements\n\n1. **Compliance Matrix and Documentation**: Bidders must submit a proposal that includes a Compliance Matrix, which ensures that all aspects of the RFQ requirements are met. Additionally, they must complete various mandatory documents such as the Vendor Profile Form and Statement of Confirmation.\n\n2. **Quotation Guidelines**: The proposal must provide a detailed breakdown of costs for each item, including delivery costs and other estimated expenses, such as customs duties and taxes. It is crucial that technical descriptions of each proposed item are detailed enough for the Commission to determine compliance with the Terms of Reference and Technical Specifications.\n\n3. **Currency and Pricing**: Prices must be quoted only in EURO or US$. The RFQ specifies the need to mention warranty periods, with a minimum warranty requirement of 24 months from the acceptance of goods or services by the Commission.\n\n4. **Delivery and Origin Information**: Bidders must provide delivery times, shipping weight and volume (if applicable), and the country of origin or assembly for all quoted items. They should also mention the availability of local service in Vienna, Austria, if any.\n\n5. **Discounts and Confirmation**: Any quantity or early payment discounts must be clearly stated. Bidders are also required to confirm that they have reviewed and agreed to the Commission's General Conditions of Contract.\n\n### Ethical and Regulatory Compliance\n\n1. **Ethical Conduct and Previous Employees**: Bidders must not use former employees of the Commission who were engaged with the solicitation within the past 24 months unless prior written approval is obtained from the Commission.\n\n2. **Child Labor and Fraudulent Practices**: Proposals should ensure no engagement in child labor or any fraudulent practices, as per the Contractor's obligations in legal and ethical standards.\n\n3. **Data Protection**: Compliance with data protection policies and confidentiality is mandatory. The use of the Commission's data for internal research or marketing without prior consent is prohibited.\n\n### Evaluation Criteria\n\n- Proposals will be evaluated based on their compliance with RFQ requirements. The Commission prioritizes bids that are \"least costly technically acceptable,\" taking into account deviations from terms and conditions, if any.\n\n### Contractual Obligations\n\n- The Purchase Order will be governed by specific documents, and any discrepancies among them will see precedence given in the following order: The Purchase Order, The Commission’s General Conditions of Contract, Terms of Reference, and the bidder’s quotation.\n\nThese requirements ensure that all submitted proposals are meticulously reviewed and maintain consistency with the Commission's standards and expectations. Submissions are expected to adhere to these guidelines strictly to be considered for evaluation. \n\n#### Attachments\n\n- *Compliance Matrix*\n- *The Commission’s General Conditions of Contract*\n- *Terms of Reference*\n- *Statement of Confirmation*\n- *Vendor Profile Form*\n\nOverall, the RFQ outlines a clear and structured approach for submissions, emphasizing compliance, ethical considerations, and detailed documentation.",
+      "embedding": null,
+      "embedding_shape": null,
+      "embedding_min": null,
+      "embedding_max": null,
+      "original_prompt": "What are the requirements for proposal listed in the RFQ?"
     }
   },
   "hybrid": {
@@ -437,6 +453,22 @@
       "embedding_min": null,
       "embedding_max": null,
       "original_prompt": "write a proposal based on RFQ?"
+    },
+    "bdaa21b8759c53d2cd6e2ec67e14ab4c": {
+      "return": "{\"high_level_keywords\": [\"Proposal requirements\", \"RFQ document\"], \"low_level_keywords\": [\"Request for Quotation\", \"Submission guidelines\", \"Formatting rules\", \"Deadline\", \"Evaluation criteria\"]}",
+      "embedding": null,
+      "embedding_shape": null,
+      "embedding_min": null,
+      "embedding_max": null,
+      "original_prompt": "what are the requirements for proposal as listed in the RFQ document?"
+    },
+    "07aaf31c4a8976a387249b257beb4fd5": {
+      "return": "The Request for Quotation (RFQ) document outlines specific requirements and conditions that bidders must meet to submit a valid proposal. Below is a detailed summary of these requirements:\n\n### **Proposal Requirements**\n\n1. **Compliance with Specifications:**  \n   Bidders must demonstrate that their offer complies with the technical specifications and requirements outlined in the RFQ. This includes providing descriptions of how the proposed goods or services meet the stated needs.\n\n2. **Pricing Structure:**  \n   A clear and detailed pricing structure is required. Bidders must specify costs related to the goods or services offered, ensuring that prices are consistent with market standards and competitive.\n\n3. **Submission of Quotations:**  \n   Quotations must be submitted in the prescribed format and within the stipulated time frame. Any late submissions or deviations from the required format may lead to disqualification.\n\n4. **Regulatory Compliance:**  \n   Bidders must ensure that their operations comply with relevant national and international laws, including labor, safety, and environmental regulations. Compliance with specific provisions such as avoiding child labor, maintaining ethical business practices, and adhering to sanctions lists is mandatory.\n\n5. **Documentary Proof:**  \n   Submissions should include necessary documentation that verifies compliance with all listed requirements. This may include certifications, licenses, or other credentials pertinent to the goods or services provided.\n\n6. **Supplier Code of Conduct:**  \n   Bidders are expected to adhere to the United Nations Supplier Code of Conduct, which encompasses principles of integrity, transparency, and ethical behavior.\n\n7. **Technical and Financial Capabilities:**  \n   The RFQ requires proof of the bidder's technical and financial capabilities to successfully deliver the project. This may involve providing financial statements, technical blueprints, or past performance records.\n\n8. **Acceptance of Terms:**  \n   A crucial part of the proposal is the bidder's acknowledgment and acceptance of the terms and conditions stipulated in the RFQ, including dispute resolution and performance guarantees.\n\n9. **Confidentiality Obligations:**  \n   Bidders must agree to confidentiality obligations concerning any sensitive information shared during the bidding process and, if awarded, throughout the contract duration.\n\nThese requirements ensure that the submissions are not only competitive but also in alignment with the values and operational standards expected by the Commission. Failure to comply with any of these aspects may result in the disqualification of the proposal.",
+      "embedding": null,
+      "embedding_shape": null,
+      "embedding_min": null,
+      "embedding_max": null,
+      "original_prompt": "what are the requirements for proposal as listed in the RFQ document?"
     }
   },
   "mix": {

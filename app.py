@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 import numpy as np
 import streamlit as st
 from lightrag import LightRAG, QueryParam
@@ -83,12 +84,16 @@ if uploaded_file:
     
     # Insert document into LightRAG
     rag.insert(text)
-    st.success("Document processed and indexed!")
+    placeholder = st.empty()
+    placeholder.success("Document processed and indexed!")
+    time.sleep(5)
+    placeholder.empty()
 
     # Query input
+    search_mode = st.sidebar.selectbox("Select retrieval mode", ["local", "global", "hybrid", "mix"])
     query = st.text_input("Ask a question about the document:")
-    if query:
-        search_mode = st.sidebar.selectbox("Select retrieval mode", ["local", "global", "hybrid", "mix"])
-        response = rag.query(query, param=QueryParam(mode=search_mode))
-        st.write("### Answer:")
-        st.write(response)
+    if st.button("Generate Answer"):
+        with st.spinner("Generating answer"):
+            if query:
+                response = rag.query(query, param=QueryParam(mode=search_mode))
+                st.write(response)
