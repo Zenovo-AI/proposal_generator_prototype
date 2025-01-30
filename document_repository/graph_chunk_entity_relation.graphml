@@ -1,0 +1,1328 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d6" for="edge" attr.name="source_id" attr.type="string" />
+  <key id="d5" for="edge" attr.name="keywords" attr.type="string" />
+  <key id="d4" for="edge" attr.name="description" attr.type="string" />
+  <key id="d3" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d2" for="node" attr.name="source_id" attr.type="string" />
+  <key id="d1" for="node" attr.name="description" attr.type="string" />
+  <key id="d0" for="node" attr.name="entity_type" attr.type="string" />
+  <graph edgedefault="undirected">
+    <node id="&quot;VIENNA INTERNATIONAL CENTRE&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"The Vienna International Centre is a location in Vienna, Austria, associated with the address provided in the document."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;ENGLISH LANGUAGE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The specified language for all written communications in the contract between the contractor and the commission."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;BOREHOLE&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"A structural component used to house seismic instruments at the station AS097 in Babate, requiring maintenance or potential replacement to ensure proper function and prevent water leakage."&lt;SEP&gt;"The Borehole is a significant part of the project, involving drilling and construction, requiring adherence to specific quality standards and testing."&lt;SEP&gt;"The Borehole is the hole drilled into the ground, which must meet specific diameter and verticality requirements as outlined in the specifications."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00&lt;SEP&gt;chunk-d280ef9359fe8532530798e9f768f66c&lt;SEP&gt;chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;BOREHOLE DRILLING&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Borehole Drilling refers to the entire process of creating a borehole, including drilling, cementation, testing, and reporting activities."</data>
+      <data key="d2">chunk-2c20e61e520b603a54fbc694d7766cf1</data>
+    </node>
+    <node id="&quot;UNITED NATIONS&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The United Nations is an international organization that provides guidelines such as the Supplier Code of Conduct for vendors engaged in procurement processes."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;QUOTATION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Quotation refers to the formal proposal submitted by a bidder in response to the Commission's RFQ, detailing pricing and compliance with the Commission's requirements."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;TERRORISM FINANCING&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Terrorism financing involves providing funds to sanctioned individuals or entities, which the Contractor is prohibited from doing under the contract."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;SUPPLIER&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The Supplier is the entity responsible for submitting quotations and invoices for the purchase order, complying with various set terms."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;METRIC UNITS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The system of measurement specified for use in all communications and documentation by the contractor."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;STATION PREMISES&quot;">
+      <data key="d0">"LOCATION"</data>
+      <data key="d1">"Station Premises is the location where drilling operations are conducted, and the exact drilling site must be approved by the Commission."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;THE DRILLING REPORT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Drilling Report is a detailed document that the Contractor must submit within two months, covering all aspects of the drilling activities."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;INSOLVENCY&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Insolvency refers to the financial state where the Contractor is unable to meet its obligations, potentially leading to contract termination by the Commission."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;VENDOR PROFILE FORM (VPF)&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Vendor Profile Form is a document used by companies to provide detailed information about their business, services, products, legal status, and financial details."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;PURCHASE ORDER&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Purchase Order is the governing document in the event of an award, detailing the terms and conditions of the procurement."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;DATA PROTECTION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Data Protection encompasses measures to safeguard the Commission’s data, restricting its use and maintaining confidentiality as defined in the contract."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;COMPREHENSIVE NUCLEAR-TEST-BAN TREATY (CTBT)&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Comprehensive Nuclear-Test-Ban Treaty (CTBT) is an international agreement that the goods and services of the purchase order must adhere to."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;INSPECTIONS AND TESTS&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Inspections and Tests are procedures conducted by the Commission to ensure that the Goods comply with technical specifications."&lt;SEP&gt;"Inspections and Tests describe procedures implemented by the Commission to ensure that goods supplied conform to specified standards and technical requirements."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1&lt;SEP&gt;chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;BAKER TOOL TOTCO RECORDER&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"Baker Tool TOTCO Recorder is a device used during drilling to ensure that the borehole remains vertical and does not drift."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;BBTS STATION RESTORATION PROJECT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The BBTS Station Restoration Project involves cleaning and preparing a borehole for the proper functioning of a seismic probe."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;INDEMNIFICATION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Indemnification requires the Contractor to protect and defend the Commission against any claims, liabilities, or expenses arising from contract performance."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;FIRM/ORGANIZATION&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"Refers to any business entity participating in procurement proceedings subject to the Commission's rules and regulations."&lt;SEP&gt;"The Firm/Organization is a party engaged in legal and binding contracts with the Commission, required to adhere to specified compliance and legal standards."</data>
+      <data key="d2">chunk-1971ac17852fc9c9103aba9883511bee&lt;SEP&gt;chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;THE COMMISSION’S GENERAL CONDITIONS OF CONTRACT&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Commission’s General Conditions of Contract outlines the standard terms and conditions applicable to purchases and contracts by the Commission."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;IMS AUXILIARY SEISMIC STATION AS097 BABAATE&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The IMS Auxiliary Seismic Station AS097 Babaate is involved in seismic activities, possibly requiring new borehole drilling or rehabilitation in Senegal."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;PROCUREMENT STAFF&quot;">
+      <data key="d0">"PERSON"</data>
+      <data key="d1">"Procurement Staff refers to personnel within the Commission responsible for managing procurement queries and related matters."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;PACKING&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Packing refers to the process of preparing goods to prevent damage or deterioration during transit and must adhere to specific guidelines."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;CASING&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"Casing is seamless steel tubing installed in the borehole for structural support, corrosion resistance, and to prevent fluid migration."&lt;SEP&gt;"Casing refers to the outer wall structure that should be cemented to the rock along the borehole to ensure high-quality contact."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c&lt;SEP&gt;chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;HYDROCONSULTANCE COMPANY&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"HYDROCONSULTANCE company is involved in cleaning the borehole as part of the BBTS station restoration project."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;AMICABLE SETTLEMENT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Amicable Settlement involves both parties attempting to resolve disputes through negotiation rather than litigation."&lt;SEP&gt;"Amicable Settlement refers to the process of resolving disputes collaboratively through negotiation before proceeding to formal conciliation or arbitration."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4&lt;SEP&gt;chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;STAFF MEMBER OF THE COMMISSION&quot;">
+      <data key="d0">"PERSON"</data>
+      <data key="d1">"Individuals employed by the Commission who may interact with vendor organizations during procurement proceedings."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;TERMS OF REFERENCE&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Terms of Reference is an annexed document that outlines specific duties, scope, objectives, and requirements for the services or goods to be provided."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;BABAATE, SENEGAL&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"Babaate is a geographic location in Senegal, where the IMS Auxiliary Seismic Station is situated and potential borehole activities are planned."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;PRIVILEGES &amp; IMMUNITIES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Privileges &amp; Immunities refer to the legal rights and protections maintained by the Commission, which are not waived in relation to the Purchase Order."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;DELIVERY&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Delivery is the process by which the Contractor ensures the goods reach their destination, retaining the risk until completion of delivery."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;DRILL BIT&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"Drill Bit is a tool used in drilling operations to cut through the earth, determining the size of the borehole and enabling secure grout casing."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;LOCAL LAWS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Local Laws refer to the national, municipal, and local regulations that the Contractor must comply with while performing the work."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;CERTIFICATE OF INCORPORATION&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"A legal document proving the formation and registration of a new corporation."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;STATEMENT OF CONFIRMATION&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Statement of Confirmation is a document that bidders must submit, confirming compliance with the Commission's conditions and the validity of their proposal."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;NEW BOREHOLE DRILLING OR REHABILITATION PROJECT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The project involves drilling new boreholes or rehabilitating existing ones at the IMS Auxiliary Seismic Station AS097 Babaate, focusing on technical work and compliance."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;REQUEST FOR QUOTATION NO. 2024-108&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Request For Quotation No. 2024-108 is a procurement event issued by the Commission, inviting bids for services or products with detailed requirements and conditions."&lt;SEP&gt;"Request For Quotation No. 2024-108 is the procurement process referenced in the document for which the quotations are being solicited."&lt;SEP&gt;"This is a formal request for suppliers to provide price quotations for particular services or goods as specified by the CTBTO."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583&lt;SEP&gt;chunk-9420c5f00d09b79ec185385f80ff000e&lt;SEP&gt;chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <node id="&quot;PURCHASE ORDER FORM&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The Purchase Order Form specifies the address and marking instructions for shipping the consignment."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;TRI-CONE ROTARY DRILL BIT&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"Tri-cone Rotary Drill Bit is a cost-efficient type of drill bit recommended for drilling the borehole to the specified dimensions."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;DRILLING OPERATIONS&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Drilling Operations involve activities described in the daily log, including the use of specific equipment and techniques to achieve the project's goals."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;VENDOR&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"A business entity that provides products, services, or work to another company or organization, often as part of a supply chain."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;VENDOR PROFILE FORM&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Vendor Profile Form is a required document that bidders must complete to provide the Commission with information on their qualifications and capabilities."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;CONFIDENTIALITY CLAUSE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The Confidentiality Clause is a provision within the contract detailing the obligations and restrictions related to handling the Commission's confidential data."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;PAYABLE_INVOICES@CTBTO.ORG&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The email address Payable_Invoices@ctbto.org is used for the submission of the Supplier's invoices electronically."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;CONSIGNEE&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"Consignee refers to the entity or person receiving the goods upon successful completion of delivery, designated in the contract."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;KELLY&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"Kelly is a drill rig component that aids in the rotation of the drill string and should not be subjected to pull-down pressure to prevent borehole drift."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;ACCEPTANCE TESTS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Acceptance Tests are procedures used to verify the compliance and accuracy of the drilling operations, including verticality measurements."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;DISCRETION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Discretion refers to the Commission's authority to make decisions regarding contract enforcement and actions against defaults or delays by the Contractor."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;CONTACT PERSON&quot;">
+      <data key="d0">"PERSON"</data>
+      <data key="d1">"A designated individual within a company responsible for managing and maintaining communication with external parties."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;COMPLIANCE MATRIX&quot;">
+      <data key="d0">"DOCUMENT"</data>
+      <data key="d1">"The Compliance Matrix is attached to the instructions for bidders, ensuring that all aspects of the RFQ are met in the submitted quotation."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;DATA PROTECTION POLICY&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The Data Protection Policy is a requirement for the Contractor, ensuring compliance with legal standards and proper handling of the Commission's data."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;PROCUREMENT@CTBTO.ORG&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The email address procurement@ctbto.org is designated for submitting requests for clarification regarding the RFQ documents."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;EXPORT LICENCE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"An Export Licence is a governmental authorization required for exporting the goods, which the Contractor must obtain."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;THE 3 COMPONENT AUXILIARY SEISMIC STATION AS097&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The 3 Component Auxiliary Seismic Station AS097, located at Babate, Senegal, is part of the International Monitoring System for the Comprehensive Nuclear-Test-Ban Treaty Organization. It is involved in seismic monitoring."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;SAFETY STANDARDS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Safety Standards encompass the rules and regulations to ensure the health and safety of workers and the environment during the project."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;BANK&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"A financial institution involved in managing financial transactions such as maintaining accounts and facilitating trade payments for companies."</data>
+      <data key="d2">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </node>
+    <node id="&quot;BOREHOLE LEAK TEST&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Borehole Leak Test is a procedure involving pressurizing and monitoring the borehole to check for leaks, ensuring the integrity and water-tightness of the borehole."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;COMPREHENSIVE NUCLEAR-TEST-BAN TREATY&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Comprehensive Nuclear-Test-Ban Treaty is an international agreement that influences the data handling requirements, limiting data storage to signatory countries providing adequate legal protections."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;CLOSING DATE&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Closing Date refers to the deadline by which certain actions or submissions related to the RFQ must be completed."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;THIRD PARTY&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Third Party may be appointed by the Commission to conduct pre-shipment inspections of the equipment supplied."</data>
+      <data key="d2">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;BABATE, SENEGAL&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"Babate is a location in Senegal where the seismic station AS097 is situated, approximately 75 km from the city of Mbour."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;PHOTO DOCUMENTATION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Photo Documentation is the process of capturing images throughout the drilling project to illustrate compliance with restoration practices."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;CONTRACTOR&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"An external entity or company to be engaged for performing tasks related to borehole rehabilitation or drilling, requiring expertise in such operations."&lt;SEP&gt;"The Contractor is an entity engaged by the Commission, responsible for fulfilling contractual obligations, obtaining necessary licenses, and following ethical guidelines such as preventing harassment."&lt;SEP&gt;"The Contractor is an entity responsible for performing the work specified in the contract, including the provision of services and goods."&lt;SEP&gt;"The Contractor is an entity responsible for providing Services and Goods for the Commission under the terms of the Contract."&lt;SEP&gt;"The Contractor is responsible for executing the borehole drilling and cementation activities as well as ensuring compliance with specifications, site remediation, and conducting acceptance tests."&lt;SEP&gt;"The Contractor is responsible for executing the drilling and cementation process, ensuring compliance with specifications such as borehole verticality, diameter size, and water tightness. They are also responsible for site preparation and reporting to the Commission."&lt;SEP&gt;"The Contractor is responsible for executing various tasks related to the drilling of a borehole, including preparation, drilling, casing, cementing, and testing, ensuring compliance with quality standards."&lt;SEP&gt;"The Contractor is responsible for supplying goods, ensuring they meet technical specifications, packing them appropriately, and arranging delivery and transportation as per contract terms."&lt;SEP&gt;"The Contractor is responsible for the professional and technical competence of its employees, selecting reliable individuals to perform under the contract while respecting local laws and ethics. The Contractor manages personnel assignments and maintains various insurances pertinent to contract obligations."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a&lt;SEP&gt;chunk-f3bda388798c3ec569603fd9c1fcfd00&lt;SEP&gt;chunk-2c20e61e520b603a54fbc694d7766cf1&lt;SEP&gt;chunk-6f052221fa71f651d9ae72a16d7abda9&lt;SEP&gt;chunk-3e1ba1a9c9b6da4ac58e6c6b1d719c32&lt;SEP&gt;chunk-d280ef9359fe8532530798e9f768f66c&lt;SEP&gt;chunk-c824d5ece60b0620f66fc5d9320070c8&lt;SEP&gt;chunk-802ec8ea2e1cf173b2afcacebe346a0d&lt;SEP&gt;chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;BOREHOLE REHABILITATING&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Borehole Rehabilitating involves repairing and maintaining the borehole, ensuring it is free of debris and any damage is managed during the rehabilitation process."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;DATA SECURITY BREACH&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"A Data Security Breach is an incident that the Contractor must address immediately, following a detailed protocol to mitigate damage and cooperate with the Commission."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;SUBCONTRACTOR(S)&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Subcontractor(s) refer to third parties that the Supplier may engage to fulfill parts of the Purchase Order, with applicable taxes identified separately."</data>
+      <data key="d2">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </node>
+    <node id="&quot;THE BOREHOLE&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"The Borehole is a geological structure mentioned for housing a seismic probe, with specific issues such as poor water quality and wall deterioration."</data>
+      <data key="d2">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </node>
+    <node id="&quot;INTERNATIONAL MONITORING SYSTEM (IMS)&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The International Monitoring System is part of the Preparatory Commission for the Comprehensive Nuclear-Test-Ban Treaty Organization, focused on global monitoring."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;TECHNICAL REPRESENTATIVES&quot;">
+      <data key="d0">"PERSON"</data>
+      <data key="d1">"Technical Representatives are individuals provided by the Contractor to aid in inspections and facilitate communication with the Commission."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;COMMISSION&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Commission is responsible for overseeing inspections and tests of goods and setting technical specifications."&lt;SEP&gt;"The Commission is the oversight body requiring the Contractor to seek approval for personnel changes, ensuring compliance with contract terms, and being named as an additional beneficiary in insurance policies."&lt;SEP&gt;"The Commission is the recipient of the Drilling Report which is submitted by the Contractor detailing the drilling activities and final specifications."&lt;SEP&gt;"The Commission oversees the contractor's work, ensuring that all contractual obligations and quality standards are met."&lt;SEP&gt;"The Commission oversees the drilling operation, approves site locations and ensures compliance with the specifications provided in the Terms of Reference (TOR)."&lt;SEP&gt;"The Commission refers to the Comprehensive Nuclear-Test-Ban Treaty Organization, which oversees the Contract and procurement of Services and Goods."&lt;SEP&gt;"The Commission refers to the Preparatory Commission for the Comprehensive Nuclear-Test-Ban Treaty Organization (CTBTO), responsible for evaluating requests for quotations and making award decisions."</data>
+      <data key="d2">chunk-2c20e61e520b603a54fbc694d7766cf1&lt;SEP&gt;chunk-6f052221fa71f651d9ae72a16d7abda9&lt;SEP&gt;chunk-3e1ba1a9c9b6da4ac58e6c6b1d719c32&lt;SEP&gt;chunk-9420c5f00d09b79ec185385f80ff000e&lt;SEP&gt;chunk-d280ef9359fe8532530798e9f768f66c&lt;SEP&gt;chunk-802ec8ea2e1cf173b2afcacebe346a0d&lt;SEP&gt;chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;DRILLING A NEW BOREHOLE (LOT 2)&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"A proposed project to drill a new borehole for housing a seismic instrument, focusing on preventing water leakage and ensuring stability."&lt;SEP&gt;"Drilling a new Borehole (LOT 2) is the planned activity of creating a new drilled borehole with specific technical specifications to ensure optimal construction and operation."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00&lt;SEP&gt;chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;ESSENTIAL TERMS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Essential Terms are critical provisions in the contract that, if breached by the Contractor, allow the Commission to terminate the contract without liability."</data>
+      <data key="d2">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </node>
+    <node id="&quot;CTBTO&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"CTBTO (Comprehensive Nuclear-Test-Ban Treaty Organization) is responsible for overseeing competitive tenders and ensuring compliance with specific terms and technical specifications."&lt;SEP&gt;"CTBTO, the Comprehensive Nuclear-Test-Ban Treaty Organization, is an international organization working towards the implementation and enforcement of the nuclear-test-ban treaty."&lt;SEP&gt;"CTBTO, the Comprehensive Nuclear-Test-Ban Treaty Organization, is referenced in the context of general conditions of contracts dated 08 October 2021, overseeing contractual operations."</data>
+      <data key="d2">chunk-3e1ba1a9c9b6da4ac58e6c6b1d719c32&lt;SEP&gt;chunk-322d42e27ab25efb766c5529780cba06&lt;SEP&gt;chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;SEISMIC PROBE&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"A device intended to be housed in the borehole, crucial for its function once the borehole is made watertight and cleaned."&lt;SEP&gt;"The Seismic Probe is a device intended for installation in the borehole to detect and measure seismic activity."</data>
+      <data key="d2">chunk-1971ac17852fc9c9103aba9883511bee&lt;SEP&gt;chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;MBOUR, SENEGAL&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"Mbour is a city in Senegal located 75 km from Babate, providing a geographical reference for the location of the seismic station."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;INSPECTION&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Inspection refers to the process conducted by the Commission to ensure work compliance with the contract specifications upon completion."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;BIDDERS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Bidders refers to the entities or individuals submitting a quotation for evaluation by the Commission."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"An international organization responsible for enforcing a treaty to ban nuclear explosions, which is involved in the Contract as the governing body."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;AIR COMPRESSORS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Air compressors are devices used in the borehole test to pressurize the air pocket and maintain desired pressure levels."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;UNCITRAL&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The United Nations Commission on International Trade Law (UNCITRAL) provides rules for conciliation and arbitration to resolve disputes arising from the contract."</data>
+      <data key="d2">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;SENEGAL&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"Senegal is the country specified in the document where the borehole drilling or rehabilitation project as part of the IMS is to take place."&lt;SEP&gt;"Senegal is the country where the work is carried out, and it sets the national regulations and standards to be met by the Contractor."&lt;SEP&gt;"Senegal is the geographical location where the laws, norms, and regulations must be complied with during the contractor's operations."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e&lt;SEP&gt;chunk-322d42e27ab25efb766c5529780cba06&lt;SEP&gt;chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;WATER QUALITY&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Water Quality refers to the condition of the water in the borehole, described as blackish and of poor quality."</data>
+      <data key="d2">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </node>
+    <node id="&quot;REHABILITATING THE EXISTING BOREHOLE (LOT 1)&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"A project involving the cleaning and sealing of the casing, and cementing of the borehole at Babate to prevent water leakage."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;LICENSES AND PERMITS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Licenses and Permits are legal authorizations the Contractor must obtain to carry out the drilling work in compliance with local laws."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </node>
+    <node id="&quot;GOVERNING BODIES&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"Entities that the Contractor is required by law to disclose certain information to, within the framework of the Contract."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;VALVES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Valves are components used to control the flow and pressure of the air and water during the borehole test."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;PRIVILEGES AND IMMUNITIES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Privileges and Immunities refer to the rights and legal exemptions provided to the Commission and its employees which remain unaffected by the contract."</data>
+      <data key="d2">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;THE CONTRACTOR&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Contractor is an entity bound by specific data protection and confidentiality obligations, responsible for handling the Commission's data securely and in compliance with legal standards."&lt;SEP&gt;"The Contractor is an entity engaged in agreements with the Commission, responsible for adhering to specified terms and conditions such as the prohibition of proscribed practices."&lt;SEP&gt;"The Contractor is responsible for delivering services in a cost-effective way, ensuring materials meet specifications, and maintaining safety and compliance."&lt;SEP&gt;"The Contractor is responsible for executing the drilling operations, preparing reports, ensuring compliance with regulations, and maintaining safety standards."&lt;SEP&gt;"The Contractor is responsible for providing all necessary tools, equipment, and overseeing the successful completion and maintenance of the borehole project, ensuring water-tightness and quality of cementation."&lt;SEP&gt;"The Contractor is the party responsible for carrying out the Services and/or delivering Goods under the terms of the Contract, subject to various conditions and liabilities."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e&lt;SEP&gt;chunk-68c3e7ff4faea94f297ce95b3f3bcfe4&lt;SEP&gt;chunk-8212f3a112f3510b7e724afb2756add9&lt;SEP&gt;chunk-ccb23473772eff86079873fd0a098e56&lt;SEP&gt;chunk-7abaa6923526c522c71abc3269832b40&lt;SEP&gt;chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;CHILD LABOUR&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Child Labour refers to the employment of children in work that potentially harms their health or development, which the Contractor must avoid."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;BOREHOLE REHABILITATION&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Borehole Rehabilitation involves cleaning, inspecting, and cementing a borehole to meet technical specifications and requirements."</data>
+      <data key="d2">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;UN SECURITY COUNCIL RESOLUTION 1267&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"UN Security Council Resolution 1267 is a sanctioning measure targeting individuals and entities associated with terrorism, referenced as a compliance standard."</data>
+      <data key="d2">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </node>
+    <node id="&quot;SENSOR&quot;">
+      <data key="d0">"TECHNOLOGY"</data>
+      <data key="d1">"A sensitive device installed within the borehole to detect seismic activity, which has been affected by water and mud, requiring cleaning and maintenance."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;GOVERNMENT OF THE STATE OF THE CONTRACTOR&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The governmental authority of the state where the Contractor is based, which may require information disclosure as per legal or contractual obligations."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;AIR PRESSURE GAUGES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Air pressure gauges are instruments used to measure the air pressure in the borehole during the leak test."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;TAX EXEMPTION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Tax Exemption denotes the Commission's freedom from taxes, with processes in place for either exemption at the source or reimbursement of taxes paid."</data>
+      <data key="d2">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;REHABILITATING THE EXISTING BOREHOLE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Rehabilitating the Existing Borehole refers to the specific project category within the technical requirements."</data>
+      <data key="d2">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;CONVENTION ON THE RIGHTS OF THE CHILD&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Convention on the Rights of the Child is an international treaty ensuring child protection from hazardous work and other harmful activities, referred to in compliance checks."&lt;SEP&gt;"The Convention on the Rights of the Child is an international treaty that sets legal standards for the protection of children's rights, against which the Contractor must ensure compliance."</data>
+      <data key="d2">chunk-1971ac17852fc9c9103aba9883511bee&lt;SEP&gt;chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;WATER LEAKAGE&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"An ongoing issue within the borehole at the seismic station AS097, impacting the operation of the installed sensor."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;CONFIDENTIALITY RESTRICTIONS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Rules outlined in the contract regarding the protection of information and the conditions under which confidentiality cannot be maintained."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;SURFACE CONDUCTOR&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A surface conductor is a type of surface casing used temporarily during drilling to stabilize the shallow section of a borehole."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;TERMINATION&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"Termination refers to the process by which the Commission can end the contract under specified conditions, including provisions for contractor compensation if not at fault."</data>
+      <data key="d2">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;CEMENTING&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Cementing is a process included in the borehole rehabilitation work, ensuring water-tightness and structural integrity of the well."</data>
+      <data key="d2">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;EMPLOYEES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Employees are individuals whose professional and technical competence is crucial for the contract's performance, falling under the responsibility of the Contractor."</data>
+      <data key="d2">chunk-3e1ba1a9c9b6da4ac58e6c6b1d719c32</data>
+    </node>
+    <node id="&quot;CORROSION&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The degradation of materials, noted particularly on the casing of the borehole, caused by prolonged exposure to water and mud."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </node>
+    <node id="&quot;PUBLIC DOMAIN&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Information that is publicly accessible and not subject to confidentiality restrictions as outlined in the contract."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;SURFACE CASING&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Surface casing is a pipe placed in the upper part of the borehole to protect from contamination and stabilize the upper part of the borehole during drilling."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;WARRANTY&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Warranty refers to the guarantee provided by the Contractor that goods supplied will meet specified standards and are covered for defects for a certain period."</data>
+      <data key="d2">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;RFQ FOR GOODS/EQUIPMENT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The RFQ for Goods/Equipment is a procurement process where entities submit bids for supplying specified goods or services."</data>
+      <data key="d2">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;UNITED NATIONS CONVENTION ON CONTRACTS FOR THE INTERNATIONAL SALE OF GOODS (VIENNA, 1980)&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"This is an international agreement that provides legal frameworks for contracts related to the international sale of goods, applicable to the contract between the Commission and the Contractor."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;UNITED NATIONS SECURITY COUNCIL&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The United Nations Security Council is an international organization whose sanctions list must be adhered to by the Contractor, ensuring funds are not used to support sanctioned individuals or entities."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;DISCLOSURE&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The act of making certain information available to others, governed by specific conditions within the contract."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;WATER&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Water is used to fill the borehole as part of the Borehole Leak Test procedures."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;STEEL PLUG&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A steel plug used to ensure the borehole is watertight by being completely cemented to the bottom of the borehole."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;EURO AND US$&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Euro and US$ are the currencies accepted for quoting prices in the described procurement process."</data>
+      <data key="d2">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;SUSTAINABLE BUSINESS PRACTICES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Sustainable Business Practices refer to environmentally, economically, and socially responsible business operations that the Commission requires its Contractors to adhere to."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;PROSCRIBED PRACTICES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Proscribed Practices include fraudulent, corrupt, coercive, collusive, unethical, and obstructive practices that are prohibited during the procurement process and contract performance."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;GOODS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Goods refer to the items supplied under the contract, which must meet technical specifications and may undergo inspections and tests."&lt;SEP&gt;"Goods refer to the products or materials that are subject to the contractual agreement between the Commission and the Contractor, requiring export licenses to be traded."&lt;SEP&gt;"Tangible products provided by the contractor under the terms of the contract."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d&lt;SEP&gt;chunk-0c18552c6871933b74c0a7344b07270a&lt;SEP&gt;chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;CEMENT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Cement is a material crucial for sealing and reinforcing the borehole to ensure its structural integrity and prevent leaks."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;CEMENT PLUG&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A cement plug used to ensure the borehole is watertight by being completely cemented to the bottom of the borehole."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;TECHNICAL SPECIFICATIONS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Technical Specifications outline the required standards and details for repairs and materials involved in the proposed items and services."</data>
+      <data key="d2">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </node>
+    <node id="&quot;UNITED NATIONS SUPPLIER CODE OF CONDUCT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A set of principles outlined by the United Nations that the Contractor must follow to ensure ethical conduct throughout its supply chains."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;ANTI-PERSONNEL MINES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Anti-Personnel Mines are weapons that the Contractor must not engage in manufacturing or selling, according to the agreement terms."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;SERVICES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Tasks or activities performed by the contractor for the commission as outlined in the contract."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;LOST CIRCULATION MATERIAL&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Lost Circulation Material refers to substances used to prevent the loss of drilling fluids in porous zones during drilling operations."&lt;SEP&gt;"Lost circulation material is used to stop the flow of drilling fluids into formation voids and is essential in maintaining circulation during drilling."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476&lt;SEP&gt;chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;TEST GAUGE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A device similar in dimension to the equipment to be installed in the borehole, used to test the final construction of the borehole."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;PREVENTION OF HARASSMENT AND SEXUAL HARASSMENT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Policies and actions implemented by the Commission to ensure a professional work environment free from harassment, which the Contractor is obliged to follow."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;PREPARATORY COMMISSION FOR THE COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Preparatory Commission for the Comprehensive Nuclear-Test-Ban Treaty Organization is tasked with establishing and maintaining the verification regime for the nuclear-test-ban treaty."&lt;SEP&gt;"The commission is responsible for preparing for the implementation of the Comprehensive Nuclear-Test-Ban Treaty, including the operation of international monitoring systems like the seismic station at Babate."&lt;SEP&gt;"This entity is associated with the purchase and requirements of equipment as part of its operations."</data>
+      <data key="d2">chunk-f3bda388798c3ec569603fd9c1fcfd00&lt;SEP&gt;chunk-322d42e27ab25efb766c5529780cba06&lt;SEP&gt;chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;FRAUDULENT PRACTICE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Fraudulent practice involves acts or omissions that mislead a party to obtain benefits or avoid obligations, and is prohibited during the procurement process."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;BANKRUPTCY&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Bankruptcy is a legal status indicating that the Contractor is unable to repay debts, which may lead to contract termination by the Commission."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;CONTRACT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The Contract outlines the obligations and terms governing the supply of goods, inspections, packing, delivery, and other requirements."&lt;SEP&gt;"The formal agreement between the contractor and the commission detailing the provision of services and goods."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d&lt;SEP&gt;chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </node>
+    <node id="&quot;SEALANT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Sealant is a material that helps in ensuring the watertightness of the borehole by sealing gaps and cracks."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;TOR&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Terms of Reference (TOR) outline the sections and procedures including preparation, drilling, casing, cementing, and testing for the borehole project."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;VIENNA&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"Vienna is the city in Austria where the CTBTO is located and where the deadline for submission of quotations is set."</data>
+      <data key="d2">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <node id="&quot;EXPORT LICENCES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Export Licences are governmental authorizations required for the goods that the Contractor must obtain to fulfill the contractual obligations."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;CORRUPT PRACTICE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Corrupt practice is the act of offering or receiving anything of value to improperly influence the actions of another party, which is prohibited under the contract."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;FORCE MAJEURE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Force Majeure refers to unforeseen circumstances such as acts of God or industrial disturbances that may hinder the Contractor's ability to fulfill the Contract obligations, allowing for suspension or termination of the Contract."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;INTELLECTUAL PROPERTY RIGHTS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Legal rights pertaining to creations of the mind, such as inventions and trademarks, which may relate to the contract."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;STEEL CASING&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Steel casing is a pipe that reinforces the borehole, providing structural support and preventing water ingress."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;LEAK TEST&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"A specific acceptance test performed to ensure that the borehole is watertight after construction."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;SALLY ALVAREZ DE SCHREINER&quot;">
+      <data key="d0">"PERSON"</data>
+      <data key="d1">"Sally Alvarez de Schreiner is the Chief of the Procurement Services Section at CTBTO."</data>
+      <data key="d2">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <node id="&quot;SPARE PARTS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Spare Parts are items that the Contractor might be required to supply as per the contract, including notifications about their availability or termination of production."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;COERCIVE PRACTICE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Coercive practice involves harming or threatening to harm a party to influence actions, and is banned under the agreement's terms."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;LIQUIDATED DAMAGES&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Liquidated Damages refer to penalties applied by the Commission for the Contractor's failure to deliver services or goods on time, calculated as a percentage of the Contract Price."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;COMPLETION OF SERVICES&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The successful or satisfactory finishing of tasks or activities as per the contract's requirements."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;REPORT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The Report is a detailed document that the Contractor must submit to the Commission after the borehole project, detailing all activities and addressing any issues encountered."</data>
+      <data key="d2">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </node>
+    <node id="&quot;VERTICALITY TEST&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"An acceptance test conducted to ensure the borehole is drilled vertically."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;ALEXANDRE STOMOV&quot;">
+      <data key="d0">"PERSON"</data>
+      <data key="d1">"Alexandre Stomov is involved in the procurement process for the CTBTO, as noted in the procurement document."</data>
+      <data key="d2">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <node id="&quot;CTBTO GENERAL CONDITIONS OF CONTRACT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A document outlining the contractual terms and conditions that guide the agreement between the Contractor and the Commission, mentioned as of 08 October 2021."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </node>
+    <node id="&quot;COLLUSIVE PRACTICE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Collusive practice involves agreements between parties to achieve improper purposes or influence actions improperly, and is prohibited in contracts."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;THE COMMISSION&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Commission is a regulatory entity responsible for managing and protecting its data, establishing strict confidentiality and compliance requirements for its contractors."&lt;SEP&gt;"The Commission is an entity involved in procurement processes, laying out strict eligibility and compliance criteria for firms and organizations."&lt;SEP&gt;"The Commission is an organization involved in contractual agreements and holds certain requirements such as obtaining export licenses, ensuring sustainable business practices, and preventing harassment."&lt;SEP&gt;"The Commission is likely a governing or supervisory body that the contractor reports to, regarding progress, problems encountered, and completion of the borehole project."&lt;SEP&gt;"The Commission is responsible for determining compliance with RFQ specifications and reimbursing authorized taxes."&lt;SEP&gt;"The Commission is the entity responsible for oversight in the Contract, having rights to terminate, seek completion, withhold payments, and enforce terms in cases of default, delay, or insolvency."&lt;SEP&gt;"The Commission is the governing body responsible for concluding contracts, monitoring compliance, and implementing policies against proscribed practices."&lt;SEP&gt;"The Commission is the organization that enters into a contract with the Contractor, responsible for overseeing the contract and ensuring its terms are met."&lt;SEP&gt;"The Commission oversees the drilling operations, conducts inspections, and ensures compliance with the contract requirements."&lt;SEP&gt;"The Commission refers to a governing body responsible for managing procurement proceedings and ensuring compliance with regulatory standards."&lt;SEP&gt;"The Commission refers to the organization overseeing the procurement process and maintaining rights regarding privileges and immunities."</data>
+      <data key="d2">chunk-0c18552c6871933b74c0a7344b07270a&lt;SEP&gt;chunk-b566e46a8e82a14904b8f12b6471222e&lt;SEP&gt;chunk-68c3e7ff4faea94f297ce95b3f3bcfe4&lt;SEP&gt;chunk-5d277314d1fd0d0c11b3030c5d1ff583&lt;SEP&gt;chunk-8212f3a112f3510b7e724afb2756add9&lt;SEP&gt;chunk-ccb23473772eff86079873fd0a098e56&lt;SEP&gt;chunk-7abaa6923526c522c71abc3269832b40&lt;SEP&gt;chunk-515f6bc51068fe55d5ab67cd543c51ed&lt;SEP&gt;chunk-c824d5ece60b0620f66fc5d9320070c8&lt;SEP&gt;chunk-f892fc2eead15d7f66eb2d0d7b032476&lt;SEP&gt;chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </node>
+    <node id="&quot;TERMINATION OF CONTRACT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The process by which the contract's conditions are ended, which can happen due to specific circumstances outlined."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;DRILLING CONTRACTOR&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Drilling Contractor is an entity involved in the actual drilling and cementing processes, responsible for providing the necessary equipment and materials on site."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;OBSTRUCTION TEST&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"An acceptance test performed to ensure there are no obstructions present in the borehole."</data>
+      <data key="d2">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;A097/ BBTS, SENEGAL, NEW BOREHOLE DRILLING OR REHABILITATION OF EXISTING BOREHOLE FOR THE IMS&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"This refers to a request for a quotation on a project involving new borehole drilling or rehabilitation of an existing borehole in Senegal as part of the CTBTO's International Monitoring System (IMS)."</data>
+      <data key="d2">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <node id="&quot;PREPARATORY COMMISSION FOR THE CTBTO&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"The Preparatory Commission for the CTBTO is an international organization focused on preparing for the implementation of the Comprehensive Nuclear-Test-Ban Treaty, involving tasks such as evaluation and decision-making in procurement."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </node>
+    <node id="&quot;UNETHICAL PRACTICE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Unethical practice refers to behaviors like conflicts of interest or violating the gift policy, which are against the guidelines set by the Commission."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;TERMINATION CLAUSE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"The Termination Clause outlines the conditions under which the Commission can terminate the Contract, such as in cases of default, force majeure, or insolvency."</data>
+      <data key="d2">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </node>
+    <node id="&quot;DEFAULT&quot;">
+      <data key="d0">"EVENT"</data>
+      <data key="d1">"The failure of the contractor to fulfill its contractual obligations which can lead to contract termination."</data>
+      <data key="d2">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </node>
+    <node id="&quot;CEMENT SERVICE COMPANIES&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"Cement Service Companies provide cement services and can be subcontracted by the Drilling Contractor if they are available nearby."</data>
+      <data key="d2">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </node>
+    <node id="&quot;DAILY LOG OF DRILLING OPERATIONS&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"A daily record maintained by the contractor detailing the drilling operations conducted."&lt;SEP&gt;"The Daily Log of Drilling Operations is a detailed record maintained by the Contractor, outlining each day's activities and conditions encountered."</data>
+      <data key="d2">chunk-b566e46a8e82a14904b8f12b6471222e&lt;SEP&gt;chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </node>
+    <node id="&quot;IMS&quot;">
+      <data key="d0">"ORGANIZATION"</data>
+      <data key="d1">"IMS stands for the International Monitoring System, a global network established to monitor compliance with the nuclear-test-ban treaty under the CTBTO."</data>
+      <data key="d2">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <node id="&quot;VIENNA, AUSTRIA&quot;">
+      <data key="d0">"GEO"</data>
+      <data key="d1">"Vienna is the location where local services may be available, and it is relevant to the context of the Commission's operations."&lt;SEP&gt;"Vienna, Austria is the designated location where conciliation and arbitration procedures under the contract are to take place."</data>
+      <data key="d2">chunk-9420c5f00d09b79ec185385f80ff000e&lt;SEP&gt;chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </node>
+    <node id="&quot;OBSTRUCTIVE PRACTICE&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"Obstructive practice includes actions to compromise investigations, such as destroying evidence, and is banned under the contract terms."</data>
+      <data key="d2">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </node>
+    <node id="&quot;BOREHOLE DRILLING AND REHABILITATION PROJECT&quot;">
+      <data key="d0">"CATEGORY"</data>
+      <data key="d1">"This category pertains to projects such as those mentioned in the document involving the drilling or rehabilitation of boreholes for monitoring purposes."</data>
+      <data key="d2">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </node>
+    <edge source="&quot;VIENNA INTERNATIONAL CENTRE&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">5.0</data>
+      <data key="d4">"The Vienna International Centre is associated with the location of the Commission's address."</data>
+      <data key="d5">"location, organizational base"</data>
+      <data key="d6">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;CASING&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Casing is installed within the Borehole to provide structural integrity and corrosion resistance during and after drilling."</data>
+      <data key="d5">"support, protection"</data>
+      <data key="d6">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;LOST CIRCULATION MATERIAL&quot;">
+      <data key="d3">6.0</data>
+      <data key="d4">"Lost Circulation Material is used in the Borehole to manage the loss of fluids in porous zones during the drilling process."</data>
+      <data key="d5">"fluid management, drilling supply"</data>
+      <data key="d6">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;SENSOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The sensor is installed within the borehole, playing a critical role in detecting seismic activities."</data>
+      <data key="d5">"installation, critical role"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;WATER LEAKAGE&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Water leakage is a major problem affecting the integrity and functionality of the borehole."</data>
+      <data key="d5">"maintenance issue, operational challenge"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;CORROSION&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"Corrosion affects the casing of the borehole, leading to deterioration and potential operational failures."</data>
+      <data key="d5">"degradation, structural integrity"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;CONTRACTOR&quot;">
+      <data key="d3">17.0</data>
+      <data key="d4">"The Contractor is responsible for drilling and constructing the Borehole according to specified requirements."&lt;SEP&gt;"The contractor is responsible for implementing solutions to rehabilitate or replace the borehole."&lt;/|&gt;"maintenance service, technical expertise"</data>
+      <data key="d5">"execution, construction"&lt;SEP&gt;8</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00&lt;SEP&gt;chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </edge>
+    <edge source="&quot;BOREHOLE&quot;" target="&quot;TEST GAUGE&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Test Gauge is used to ensure the final dimensions of the borehole are suitable for the equipment to be installed."</data>
+      <data key="d5">"measurement, quality assurance"</data>
+      <data key="d6">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </edge>
+    <edge source="&quot;BOREHOLE DRILLING&quot;" target="&quot;CONTRACTOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is responsible for all aspects of the Borehole Drilling event, from execution to reporting."</data>
+      <data key="d5">"project management, execution"</data>
+      <data key="d6">chunk-2c20e61e520b603a54fbc694d7766cf1</data>
+    </edge>
+    <edge source="&quot;UNITED NATIONS&quot;" target="&quot;FIRM/ORGANIZATION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Firms/Organizations must adhere to the United Nations Supplier Code of Conduct to participate in procurement with the organization."</data>
+      <data key="d5">"ethical compliance, regulatory adherence"</data>
+      <data key="d6">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </edge>
+    <edge source="&quot;UNITED NATIONS&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Commission requires compliance with the United Nations Supplier Code of Conduct in its procurement processes."</data>
+      <data key="d5">"compliance, regulatory standards"</data>
+      <data key="d6">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </edge>
+    <edge source="&quot;QUOTATION&quot;" target="&quot;BIDDERS&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Bidders submit a Quotation as part of the procurement process, which is evaluated by the Commission for compliance and cost-effectiveness."</data>
+      <data key="d5">"procurement, bidding process"</data>
+      <data key="d6">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </edge>
+    <edge source="&quot;TERRORISM FINANCING&quot;" target="&quot;THE CONTRACTOR&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"The Contractor is required to ensure its funds are not used for terrorism financing, adhering to Security Council sanctions."</data>
+      <data key="d5">"compliance, security"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;SUPPLIER&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Commission sets the requirements and evaluates the Supplier's qualifications for performing the Purchase Order."</data>
+      <data key="d5">"procurement, contractual compliance"</data>
+      <data key="d6">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </edge>
+    <edge source="&quot;STATION PREMISES&quot;" target="&quot;COMMISSION&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Commission must approve the exact drilling site within the Station Premises before the Contractor can begin operations."</data>
+      <data key="d5">"site approval, oversight"</data>
+      <data key="d6">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </edge>
+    <edge source="&quot;THE DRILLING REPORT&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Drilling Report is submitted to the Commission for review, forming a part of the documentation for compliance and completion verification."</data>
+      <data key="d5">"documentation, compliance check"</data>
+      <data key="d6">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </edge>
+    <edge source="&quot;DATA PROTECTION&quot;" target="&quot;THE CONTRACTOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor must comply with data protection guidelines to secure the Commission's data against unauthorized use."</data>
+      <data key="d5">"data security, confidentiality"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;COMPREHENSIVE NUCLEAR-TEST-BAN TREATY (CTBT)&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Commission requires that the origin of goods and services comply with the CTBT requirements."</data>
+      <data key="d5">"compliance, international agreement"</data>
+      <data key="d6">chunk-5d277314d1fd0d0c11b3030c5d1ff583</data>
+    </edge>
+    <edge source="&quot;INSPECTIONS AND TESTS&quot;" target="&quot;GOODS&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Goods are subject to Inspections and Tests to confirm their conformity with technical specifications."</data>
+      <data key="d5">"quality assurance, compliance"</data>
+      <data key="d6">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;BAKER TOOL TOTCO RECORDER&quot;" target="&quot;DRILLING CONTRACTOR&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Drilling Contractor uses the Baker Tool TOTCO Recorder to ensure borehole verticality throughout the drilling process."</data>
+      <data key="d5">"drilling accuracy, technology use"</data>
+      <data key="d6">chunk-6f052221fa71f651d9ae72a16d7abda9</data>
+    </edge>
+    <edge source="&quot;BBTS STATION RESTORATION PROJECT&quot;" target="&quot;HYDROCONSULTANCE COMPANY&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"HYDROCONSULTANCE company carries out cleaning of the borehole as part of the broader BBTS Station Restoration Project."</data>
+      <data key="d5">"project execution, task assignment"</data>
+      <data key="d6">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </edge>
+    <edge source="&quot;BBTS STATION RESTORATION PROJECT&quot;" target="&quot;SEISMIC PROBE&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The purpose of the BBTS Station Restoration Project is to prepare the borehole for housing the seismic probe, ensuring its proper functioning."</data>
+      <data key="d5">"equipment preparation, project goal"</data>
+      <data key="d6">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </edge>
+    <edge source="&quot;FIRM/ORGANIZATION&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Firm/Organization must comply with the Commission's legal and operational standards to engage in procurement activities."</data>
+      <data key="d5">"contractual engagement, compliance"</data>
+      <data key="d6">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </edge>
+    <edge source="&quot;FIRM/ORGANIZATION&quot;" target="&quot;UN SECURITY COUNCIL RESOLUTION 1267&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Firm/Organization must ensure no associations with entities identified under the UN Security Council Resolution 1267."</data>
+      <data key="d5">"compliance, anti-terrorism measures"</data>
+      <data key="d6">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </edge>
+    <edge source="&quot;FIRM/ORGANIZATION&quot;" target="&quot;CONVENTION ON THE RIGHTS OF THE CHILD&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Firm/Organization is required to conduct its business in alignment with the Convention on the Rights of the Child."</data>
+      <data key="d5">"child protection, legal compliance"</data>
+      <data key="d6">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </edge>
+    <edge source="&quot;IMS AUXILIARY SEISMIC STATION AS097 BABAATE&quot;" target="&quot;NEW BOREHOLE DRILLING OR REHABILITATION PROJECT&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The seismic station is the site for the borehole project, indicating its role as a key location for the planned activities."</data>
+      <data key="d5">"infrastructure development, site-specific"</data>
+      <data key="d6">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </edge>
+    <edge source="&quot;IMS AUXILIARY SEISMIC STATION AS097 BABAATE&quot;" target="&quot;BABAATE, SENEGAL&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"Babaate is the geographic location of the seismic station, which is central to the borehole project."</data>
+      <data key="d5">"geographic context, site location"</data>
+      <data key="d6">chunk-7abaa6923526c522c71abc3269832b40</data>
+    </edge>
+    <edge source="&quot;PACKING&quot;" target="&quot;DELIVERY&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"Packing is critical to ensure that goods are protected during transit, facilitating successful Delivery."</data>
+      <data key="d5">"logistics, protection"</data>
+      <data key="d6">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;CASING&quot;" target="&quot;CONTRACTOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is responsible for cementing the casing to the rock to ensure a high-quality contact."</data>
+      <data key="d5">"construction, quality assurance"</data>
+      <data key="d6">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </edge>
+    <edge source="&quot;AMICABLE SETTLEMENT&quot;" target="&quot;UNCITRAL&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"Amicable Settlement acts as a preliminary step before potentially initiating UNCITRAL's formal dispute resolution mechanisms."</data>
+      <data key="d5">"dispute resolution, negotiation"</data>
+      <data key="d6">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </edge>
+    <edge source="&quot;REQUEST FOR QUOTATION NO. 2024-108&quot;" target="&quot;COMMISSION&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"Request For Quotation No. 2024-108 is organized and evaluated by the Commission to make decisions on cost-effective and compliant submissions."</data>
+      <data key="d5">"evaluation, procurement"</data>
+      <data key="d6">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </edge>
+    <edge source="&quot;VENDOR&quot;" target="&quot;CONTACT PERSON&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Contact Person serves as the primary liaison between the Vendor and external entities, ensuring smooth communication."</data>
+      <data key="d5">"coordination, communication"</data>
+      <data key="d6">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </edge>
+    <edge source="&quot;VENDOR&quot;" target="&quot;BANK&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Bank manages financial transactions for the Vendor, facilitating their payments and banking needs."</data>
+      <data key="d5">"financial services, banking"</data>
+      <data key="d6">chunk-515f6bc51068fe55d5ab67cd543c51ed</data>
+    </edge>
+    <edge source="&quot;EXPORT LICENCE&quot;" target="&quot;CONTRACTOR&quot;">
+      <data key="d3">6.0</data>
+      <data key="d4">"The Contractor is responsible for obtaining the necessary Export Licence for the goods under the terms of the contract."</data>
+      <data key="d5">"authorization, legal requirement"</data>
+      <data key="d6">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;THE 3 COMPONENT AUXILIARY SEISMIC STATION AS097&quot;" target="&quot;BABATE, SENEGAL&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The station AS097 is located in Babate, making it a significant geo-location for their monitoring activities."</data>
+      <data key="d5">"geographical location, monitoring site"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;THE 3 COMPONENT AUXILIARY SEISMIC STATION AS097&quot;" target="&quot;INTERNATIONAL MONITORING SYSTEM (IMS)&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The station AS097 is part of the IMS network, contributing to the monitoring activities managed by the IMS."</data>
+      <data key="d5">"seismic monitoring, network participation"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;THE 3 COMPONENT AUXILIARY SEISMIC STATION AS097&quot;" target="&quot;REHABILITATING THE EXISTING BOREHOLE (LOT 1)&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The rehabilitation of the borehole is crucial for the continued monitoring capabilities of the station AS097."</data>
+      <data key="d5">"facility maintenance, monitoring enhancement"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;THE 3 COMPONENT AUXILIARY SEISMIC STATION AS097&quot;" target="&quot;DRILLING A NEW BOREHOLE (LOT 2)&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The new borehole would enhance the monitoring capacity of station AS097 by housing sensitive seismic equipment."</data>
+      <data key="d5">"capacity expansion, technological upgrade"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;BOREHOLE LEAK TEST&quot;" target="&quot;THE CONTRACTOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is responsible for carrying out the Borehole Leak Test, ensuring it is conducted correctly to gauge the integrity of the borehole."</data>
+      <data key="d5">"implementation, quality assurance"</data>
+      <data key="d6">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;PREPARATORY COMMISSION FOR THE COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d3">6.0</data>
+      <data key="d4">"The Contractor supplies goods or services required by the Preparatory Commission for the Comprehensive Nuclear-Test-Ban Treaty Organization, under a specified contract."</data>
+      <data key="d5">"service supply, compliance"</data>
+      <data key="d6">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;CONTRACT&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is responsible for fulfilling the terms specified in the Contract, including supply, packing, and delivery of goods."</data>
+      <data key="d5">"obligation, execution"</data>
+      <data key="d6">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">19.0</data>
+      <data key="d4">"The Commission has a contractual relationship with the Contractor, requiring adherence to various obligations including obtaining export licenses, following sustainable practices, and preventing harassment."&lt;SEP&gt;"The Contractor is engaged by the Commission to perform work under the contract, which outlines rights, obligations, and procedures in case of disputes."</data>
+      <data key="d5">"contractual obligation, ethical standards"&lt;SEP&gt;"contractual relationship, obligations"</data>
+      <data key="d6">chunk-0c18552c6871933b74c0a7344b07270a&lt;SEP&gt;chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;LEAK TEST&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor must perform a Leak Test to verify that the borehole is watertight."</data>
+      <data key="d5">"testing, quality assurance"</data>
+      <data key="d6">chunk-d280ef9359fe8532530798e9f768f66c</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;DRILLING A NEW BOREHOLE (LOT 2)&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The contractor can propose and execute drilling plans for a new borehole as part of LOT 2."</data>
+      <data key="d5">"project execution, technical planning"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;UNITED NATIONS SUPPLIER CODE OF CONDUCT&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Contractor is required to comply with the United Nations Supplier Code of Conduct as part of its contractual obligations with the Commission."</data>
+      <data key="d5">"compliance, ethical guidelines"</data>
+      <data key="d6">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;COMMISSION&quot;">
+      <data key="d3">50.0</data>
+      <data key="d4">"The Commission oversees the inspection, testing, and acceptance of goods supplied by the Contractor, setting specifications and guidelines for the contract."&lt;SEP&gt;"The Contractor must keep the Commission informed about the progress and any issues during the drilling process. The Commission approves the site location and any necessary alterations during the operation."&lt;SEP&gt;"The Contractor must seek the Commission's approval for personnel changes and maintain adequate insurances naming the Commission as an additional beneficiary to cover various risks associated with the contract."&lt;SEP&gt;"The Contractor must submit a comprehensive Drilling Report to the Commission after completion of the Borehole Drilling activities."&lt;SEP&gt;"The Contractor provides Goods and Services to the Commission according to the contract terms."&lt;SEP&gt;"The Contractor reports to the Commission and follows its instructions, while the Commission ensures the Contractor meets contractual obligations."</data>
+      <data key="d5">"oversight, communication"&lt;SEP&gt;"oversight, compliance"&lt;SEP&gt;"reporting, compliance"&lt;SEP&gt;"service provision, contractual obligation"&lt;SEP&gt;"supervision, contract execution"</data>
+      <data key="d6">chunk-2c20e61e520b603a54fbc694d7766cf1&lt;SEP&gt;chunk-6f052221fa71f651d9ae72a16d7abda9&lt;SEP&gt;chunk-3e1ba1a9c9b6da4ac58e6c6b1d719c32&lt;SEP&gt;chunk-d280ef9359fe8532530798e9f768f66c&lt;SEP&gt;chunk-802ec8ea2e1cf173b2afcacebe346a0d&lt;SEP&gt;chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;GOVERNING BODIES&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Contractor might be required to disclose information to Governing bodies depending on legal or contractual demands."</data>
+      <data key="d5">"legal compliance, information disclosure"</data>
+      <data key="d6">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </edge>
+    <edge source="&quot;CONTRACTOR&quot;" target="&quot;GOVERNMENT OF THE STATE OF THE CONTRACTOR&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Contractor might be required to disclose information to its home government for legal compliance and authorization purposes."</data>
+      <data key="d5">"legal compliance, government regulation"</data>
+      <data key="d6">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </edge>
+    <edge source="&quot;BOREHOLE REHABILITATING&quot;" target="&quot;THE CONTRACTOR&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Contractor manages the Borehole Rehabilitating process, ensuring any issues are addressed, and the borehole is maintained effectively."</data>
+      <data key="d5">"maintenance, responsibility"</data>
+      <data key="d6">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </edge>
+    <edge source="&quot;THE BOREHOLE&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">6.0</data>
+      <data key="d4">"The Borehole is being assessed and maintained presumably under the oversight of an organization like the Commission, which manages contracts and compliance."</data>
+      <data key="d5">"geological assessment, organizational oversight"</data>
+      <data key="d6">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </edge>
+    <edge source="&quot;THE BOREHOLE&quot;" target="&quot;SEISMIC PROBE&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Seismic Probe is intended to be installed in the Borehole, which is prepared and assessed to house it."</data>
+      <data key="d5">"geological installation, technology deployment"</data>
+      <data key="d6">chunk-1971ac17852fc9c9103aba9883511bee</data>
+    </edge>
+    <edge source="&quot;INTERNATIONAL MONITORING SYSTEM (IMS)&quot;" target="&quot;PREPARATORY COMMISSION FOR THE COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"IMS is an entity managed by the Preparatory Commission for global nuclear test-ban monitoring."</data>
+      <data key="d5">"organizational management, treaty compliance"</data>
+      <data key="d6">chunk-f3bda388798c3ec569603fd9c1fcfd00</data>
+    </edge>
+    <edge source="&quot;COMMISSION&quot;" target="&quot;PREPARATORY COMMISSION FOR THE CTBTO&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Commission is a part of or synonymous with the Preparatory Commission for the CTBTO, involved in handling procurement and evaluation processes."</data>
+      <data key="d5">"organizational structure, procurement"</data>
+      <data key="d6">chunk-9420c5f00d09b79ec185385f80ff000e</data>
+    </edge>
+    <edge source="&quot;COMMISSION&quot;" target="&quot;COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Commission, as part of the Comprehensive Nuclear-Test-Ban Treaty Organization, is responsible for the oversight of the contract."</data>
+      <data key="d5">"oversight, governance"</data>
+      <data key="d6">chunk-802ec8ea2e1cf173b2afcacebe346a0d</data>
+    </edge>
+    <edge source="&quot;COMMISSION&quot;" target="&quot;PREPARATORY COMMISSION FOR THE COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Commission is involved in activities related to the Preparatory Commission for the Comprehensive Nuclear-Test-Ban Treaty Organization, indicating oversight or coordination roles."</data>
+      <data key="d5">"contract fulfillment, oversight"</data>
+      <data key="d6">chunk-7c35e09be4ac647d41a902a062d1b9b1</data>
+    </edge>
+    <edge source="&quot;DRILLING A NEW BOREHOLE (LOT 2)&quot;" target="&quot;THE CONTRACTOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is tasked with drilling a new borehole as per specific guidelines and ensuring that all technical requirements are met."</data>
+      <data key="d5">"project execution, compliance"</data>
+      <data key="d6">chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </edge>
+    <edge source="&quot;CTBTO&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"CTBTO provides information about competitive tenders managed by The Commission on their website, indicating an administrative and procedural relationship."</data>
+      <data key="d5">"administrative, procurement process"</data>
+      <data key="d6">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </edge>
+    <edge source="&quot;CTBTO&quot;" target="&quot;PREPARATORY COMMISSION FOR THE COMPREHENSIVE NUCLEAR-TEST-BAN TREATY ORGANIZATION&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Preparatory Commission acts under the CTBTO to establish the nuclear-test-ban treaty verification regime."</data>
+      <data key="d5">"organizational structure, treaty enforcement"</data>
+      <data key="d6">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </edge>
+    <edge source="&quot;CTBTO&quot;" target="&quot;SALLY ALVAREZ DE SCHREINER&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Sally Alvarez de Schreiner is a leading figure in CTBTO's procurement processes."</data>
+      <data key="d5">"leadership, procurement"</data>
+      <data key="d6">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </edge>
+    <edge source="&quot;CTBTO&quot;" target="&quot;VIENNA&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"Vienna is the CTBTO's operational hub for this procurement process, involving stakeholders in the region."</data>
+      <data key="d5">"logistical hub, operational activities"</data>
+      <data key="d6">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </edge>
+    <edge source="&quot;CTBTO&quot;" target="&quot;A097/ BBTS, SENEGAL, NEW BOREHOLE DRILLING OR REHABILITATION OF EXISTING BOREHOLE FOR THE IMS&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"This event is part of CTBTO's International Monitoring System efforts to enhance nuclear monitoring capabilities."</data>
+      <data key="d5">"project implementation, monitoring"</data>
+      <data key="d6">chunk-322d42e27ab25efb766c5529780cba06</data>
+    </edge>
+    <edge source="&quot;UNCITRAL&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Commission utilizes UNCITRAL rules for dispute resolution processes like conciliation and arbitration.</data>
+      <data key="d5">"legal framework, dispute resolution"</data>
+      <data key="d6">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </edge>
+    <edge source="&quot;UNCITRAL&quot;" target="&quot;VIENNA, AUSTRIA&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"Vienna, Austria is the venue where UNCITRAL's conciliation and arbitration procedures are conducted according to the contract."</data>
+      <data key="d5">"location, legal proceedings"</data>
+      <data key="d6">chunk-c824d5ece60b0620f66fc5d9320070c8</data>
+    </edge>
+    <edge source="&quot;SENEGAL&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Commission requires compliance with Senegal's laws and regulations while conducting operations in the country."</data>
+      <data key="d5">"regulatory compliance, jurisdiction"</data>
+      <data key="d6">chunk-ccb23473772eff86079873fd0a098e56</data>
+    </edge>
+    <edge source="&quot;SENEGAL&quot;" target="&quot;THE CONTRACTOR&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor must conduct work in compliance with Senegal's national regulations related to health, safety, and environmental protection."</data>
+      <data key="d5">"regulatory compliance, national standards"</data>
+      <data key="d6">chunk-b566e46a8e82a14904b8f12b6471222e</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;COLLUSIVE PRACTICE&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"The Contractor is bound to avoid collusive practices to prevent improper agreements that could harm competition."</data>
+      <data key="d5">"competition integrity, fair trade"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;UNETHICAL PRACTICE&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor must avoid unethical practices to comply with specified business conduct standards and maintain integrity."</data>
+      <data key="d5">"integrity, compliance"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;OBSTRUCTIVE PRACTICE&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is forbidden from engaging in obstructive practices to ensure the integrity of investigations and evidence preservation."</data>
+      <data key="d5">"investigation integrity, evidence preservation"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;CHILD LABOUR&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"The Contractor must ensure that no child labor is involved in its operations to protect children's rights under the Convention."</data>
+      <data key="d5">"child protection, compliance"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;FORCE MAJEURE&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"Force Majeure affects The Contractor's performance under the Contract by providing valid reasons to suspend obligations temporarily or lead to Contract termination."</data>
+      <data key="d5">"performance impact, natural events"</data>
+      <data key="d6">chunk-68c3e7ff4faea94f297ce95b3f3bcfe4</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">41.0</data>
+      <data key="d4">"The Commission oversees and enforces terms with The Contractor, including handling defaults, withholding payments, and determining conditions under Contract enforcement."&lt;SEP&gt;"The Commission oversees and requires The Contractor to adhere to data protection and confidentiality obligations, ensuring proper handling of sensitive information."&lt;SEP&gt;"The Commission regulates and monitors the Contractor to ensure compliance with terms, including prohibiting proscribed and unethical practices."&lt;SEP&gt;"The Contractor must work under the oversight of the Commission, adhering to contract specifications and implementing remedial actions if needed."&lt;SEP&gt;"The Contractor reports to The Commission, providing updates, reports, and ensuring that the borehole project meets all set standards and specifications."</data>
+      <data key="d5">"contract enforcement, oversight"&lt;SEP&gt;"data security, compliance"&lt;SEP&gt;"oversight, compliance"&lt;SEP&gt;"regulation, compliance"&lt;SEP&gt;"reporting, oversight"</data>
+      <data key="d6">chunk-b566e46a8e82a14904b8f12b6471222e&lt;SEP&gt;chunk-68c3e7ff4faea94f297ce95b3f3bcfe4&lt;SEP&gt;chunk-8212f3a112f3510b7e724afb2756add9&lt;SEP&gt;chunk-7abaa6923526c522c71abc3269832b40&lt;SEP&gt;chunk-f892fc2eead15d7f66eb2d0d7b032476</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;UNITED NATIONS SECURITY COUNCIL&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor must comply with the Sanctions List of the United Nations Security Council to ensure no funds support individuals or entities on it."</data>
+      <data key="d5">"compliance, regulatory adherence"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;CONVENTION ON THE RIGHTS OF THE CHILD&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor must comply with the rights stated in the Convention on the Rights of the Child, ensuring no child labor is involved."</data>
+      <data key="d5">"compliance, child protection"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;PROSCRIBED PRACTICES&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is required to avoid engaging in Proscribed Practices like fraud, corruption and coercion during contract execution."</data>
+      <data key="d5">"compliance, ethical conduct"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;ANTI-PERSONNEL MINES&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Contractor is prohibited from engaging in activities related to the sale or manufacture of Anti-Personnel Mines."</data>
+      <data key="d5">"prohibition, ethical compliance"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;FRAUDULENT PRACTICE&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"The Contractor must avoid engaging in fraudulent practices to ensure fair and transparent procurement and contract performance."</data>
+      <data key="d5">"integrity, fair practices"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;CORRUPT PRACTICE&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"The Contractor is prohibited from engaging in corrupt practices to maintain ethical standards and fairness in dealings."</data>
+      <data key="d5">"ethical standards, fairness"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;THE CONTRACTOR&quot;" target="&quot;COERCIVE PRACTICE&quot;">
+      <data key="d3">10.0</data>
+      <data key="d4">"The Contractor must refrain from coercive practices to ensure actions are not taken under undue influence or threat."</data>
+      <data key="d5">"non-coercion, ethical conduct"</data>
+      <data key="d6">chunk-8212f3a112f3510b7e724afb2756add9</data>
+    </edge>
+    <edge source="&quot;UNITED NATIONS CONVENTION ON CONTRACTS FOR THE INTERNATIONAL SALE OF GOODS (VIENNA, 1980)&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">7.0</data>
+      <data key="d4">"The Commission applies the United Nations Convention's legal frameworks to its contracts with the Contractor."</data>
+      <data key="d5">"legal compliance, international standards"</data>
+      <data key="d6">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </edge>
+    <edge source="&quot;SUSTAINABLE BUSINESS PRACTICES&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">8.0</data>
+      <data key="d4">"The Commission requires the Contractor to perform its obligations in a manner that considers economic, environmental, and social factors."</data>
+      <data key="d5">"sustainability, ethical business"</data>
+      <data key="d6">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </edge>
+    <edge source="&quot;PREVENTION OF HARASSMENT AND SEXUAL HARASSMENT&quot;" target="&quot;THE COMMISSION&quot;">
+      <data key="d3">9.0</data>
+      <data key="d4">"The Commission enforces strict measures and policies to prevent harassment and sexual harassment, which the Contractor must adhere to."</data>
+      <data key="d5">"work environment, ethical conduct"</data>
+      <data key="d6">chunk-0c18552c6871933b74c0a7344b07270a</data>
+    </edge>
+  </graph>
+</graphml>
