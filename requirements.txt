@@ -17,4 +17,13 @@ unstructured
 InstructorEmbedding
 chardet
 langchain_huggingface
-nest-asyncio
+nest-asyncio 
+PyPDF2
+langchain-community
+tiktoken
+langchain-openai
+google-generativeai
+lightrag-hku
+pipmaster
+networkx
+nano_vectordb
