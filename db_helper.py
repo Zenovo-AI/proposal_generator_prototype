@@ -1,10 +1,6 @@
 import sqlite3
 import streamlit as st
 from document_processor import DocumentProcessor
-from utils import create_empty_vectordb
-import openai
-
-openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
 # Initialize document processor
 process_document = DocumentProcessor()
@@ -48,6 +44,7 @@ def insert_file_metadata(file_name, section, file_content):
             INSERT INTO {table_name} (file_name, file_content)
             VALUES (?, ?);
         """, (file_name, file_content))
+        print(f"File content: {file_content}")
         conn.commit()
     except sqlite3.IntegrityError:
         print(f"File {file_name} already exists in the database.")
@@ -106,8 +103,6 @@ def reload_session_state(process_document, section_keywords):
                 print(f"Embeddings for {display_name} reloaded successfully.")
             else:
                 print(f"No files uploaded for {display_name}. Initializing empty FAISS index.")
-                empty_vectordb = create_empty_vectordb()
-                st.session_state.section_embeddings[table_name] = (empty_vectordb, [])
         except Exception as e:
             print(f"Error reloading section {display_name}: {e}")
     conn.close()
