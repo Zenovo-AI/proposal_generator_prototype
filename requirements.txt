@@ -27,3 +27,4 @@ lightrag-hku
 pipmaster
 networkx
 nano_vectordb
+trafilatura
