@@ -20,11 +20,6 @@ def initialize_session_state():
         initialize_database()
         st.session_state.initialized = True
 
-    # Initialize credentials in session state if not already present
-    if "credentials" not in st.session_state:
-        st.session_state.credentials = None
-
-
 
 # Helper Function to Clean and Parse JSON
 def clean_and_parse_json(raw_json):
