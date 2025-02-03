@@ -164,6 +164,13 @@ cython_debug/
 # Add this line
 uploaded_files
 .streamlit
+# PyPI configuration file
+.pypirc
+.streamlit/
+analysis_workspace/
+LightRAG/
+temp_files/
+files.db
 
 <<<<<<< HEAD
 data/
