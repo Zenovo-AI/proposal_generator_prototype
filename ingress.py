@@ -13,7 +13,9 @@ process_document = DocumentProcessor()
 
 def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = None, section = ""):
     from app import RAGFactory
-    section, table_name = select_section()
+    # Get the section from session state
+    section = st.session_state.current_section
+    
     try:
         # Map section to table name
         table_name = next((key for key, value in SECTION_KEYWORDS.items() if value == section), None)
@@ -48,7 +50,7 @@ def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = No
         file_path_str = str(file_path)
         if file_path_str:
             if file_path_str.endswith(".pdf"):
-                text_content.append(process_document.extract_text_from_pdf(file_path_str))
+                text_content.append(process_document.extract_text_and_tables_from_pdf(file_path_str))
                 print(type(f"Text content is of type: {text_content}"))
             elif file_path_str.endswith(".txt"):
                 text_content.append(process_document.extract_txt_content(file_path_str))
@@ -70,9 +72,9 @@ def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = No
         results = []
         for content in text_content:
             # Create unique working directory for the file
-            working_dir = Path(f"./analysis_workspace/{section}/{file_name.split('.')[0]}")
+            # working_dir = Path(f"./analysis_workspace/{section}/{file_name.split('.')[0]}")
+            working_dir = Path(f"./analysis_workspace/{section}")
             working_dir.mkdir(parents=True, exist_ok=True)  # ✅ Ensure directory exists using pathlib
-
             rag = RAGFactory.create_rag(str(working_dir))  # Convert Path object to string if needed
             rag.insert(text_content)
 

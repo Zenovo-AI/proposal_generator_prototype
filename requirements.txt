@@ -28,3 +28,4 @@ pipmaster
 networkx
 nano_vectordb
 trafilatura
+pdfplumber

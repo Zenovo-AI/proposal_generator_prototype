@@ -79,30 +79,33 @@ def get_uploaded_sections(section_keywords):
             uploaded_sections.append(display_name)
     conn.close()
     return uploaded_sections
+    
+    
+    
+def check_if_file_exists_in_section(file_name, section):
+    """
+    Check if the file has already been processed and exists in the database for the selected section.
+    :param file_name: The name of the file to check.
+    :param section: The selected section (maps to a key in SECTION_KEYWORDS).
+    :return: True if the file exists in the database, False otherwise.
+    """
+    # Map the section to its corresponding table name using SECTION_KEYWORDS
+    table_name = next((key for key, value in SECTION_KEYWORDS.items() if value == section), None)
 
-# Reload session state for processing the document content
-def reload_session_state(process_document, section_keywords):
-    conn = sqlite3.connect('files.db', check_same_thread=False)
+    if not table_name:
+        # If no valid table is found, return False
+        return False
+
+    # Connect to the database
+    conn = sqlite3.connect("files.db")
     cursor = conn.cursor()
 
-    st.session_state.section_embeddings = {}
-    st.session_state.uploaded_sections = set()
+    # Query to check if the file already exists in the section's table
+    cursor.execute(f'SELECT 1 FROM "{table_name}" WHERE file_name = ?', (file_name,))
+    result = cursor.fetchone()
 
-    for table_name, display_name in section_keywords.items():
-        try:
-            # Fetch all files from the database for the section
-            cursor.execute(f"SELECT file_name, file_content FROM {table_name};")
-            stored_files = cursor.fetchall()
-
-            if stored_files:
-                # Process all stored files, assuming content is text here
-                files_to_process = [file_content for _, file_content in stored_files]
-                vectordb, documents = process_document.process_and_chunk_text(files_to_process)
-                st.session_state.section_embeddings[table_name] = (vectordb, documents)
-                st.session_state.uploaded_sections.add(display_name)
-                print(f"Embeddings for {display_name} reloaded successfully.")
-            else:
-                print(f"No files uploaded for {display_name}. Initializing empty FAISS index.")
-        except Exception as e:
-            print(f"Error reloading section {display_name}: {e}")
+    # Close the connection to the database
     conn.close()
+
+    # If a result is found, it means the file already exists, so return True
+    return result is not None
