@@ -1,7 +1,4 @@
-import uuid
 import streamlit as st
-from typing import Hashable
-from hashlib import md5
 
 # Initialize extractor and constants
 SECTION_KEYWORDS = {
