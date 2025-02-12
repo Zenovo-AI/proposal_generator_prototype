@@ -6,11 +6,13 @@ import time
 import numpy as np
 import streamlit as st
 from lightrag import LightRAG, QueryParam
-from lightrag.llm.openai import openai_embed, gpt_4o_complete
+from lightrag.llm.openai import openai_embed, gpt_4o_complete, gpt_4o_mini_complete
 from lightrag.utils import EmbeddingFunc
 from constant import SECTION_KEYWORDS, select_section
-from db_helper import check_if_file_exists_in_section, delete_file, get_uploaded_sections, initialize_database
+from db_helper import check_if_file_exists_in_section, check_working_directory, delete_file, get_uploaded_sections, initialize_database
 from inference import process_files_and_links
+import logging
+
 
 
 def initialize_session_state():
@@ -59,12 +61,37 @@ class RAGFactory:
             addon_params={
                 "insert_batch_size": 10  # Process 10 documents per batch
             },
-            llm_model_func=gpt_4o_complete,
+            llm_model_func=gpt_4o_mini_complete,
             embedding_func=cls._shared_embedding
         )
 
 
+
+def generate_answer():
+    """Generates an answer when the user enters a query and presses Enter."""
+    query = st.session_state.query_input  # Get user query from session state
+    if not query:
+        return  # Do nothing if query is empty
+
+    with st.spinner("Generating answer..."):
+        try:
+            working_dir = Path("./analysis_workspace")
+            working_dir.mkdir(parents=True, exist_ok=True)
+            rag = RAGFactory.create_rag(str(working_dir))  
+            response = rag.query(query, QueryParam(mode=st.session_state.search_mode))
+
+            # Store in chat history
+            st.session_state.chat_history.append(("You", query))
+            st.session_state.chat_history.append(("Bot", response))
+        except Exception as e:
+            st.error(f"Error retrieving response: {e}")
+
+    # Reset query input to allow further queries
+    st.session_state.query_input = ""
+
 def main():
+    logging.getLogger("root").setLevel(logging.CRITICAL)
+
     st.title("Proposal and Chatbot System")
     st.write("Upload a document and ask questions based on structured knowledge retrieval.")
 
@@ -77,18 +104,16 @@ def main():
     if "current_section" not in st.session_state:
         st.session_state.current_section = sections[0]
 
-    # Create selectbox outside the function
+    # Sidebar: Select section
     selected_section = st.sidebar.selectbox(
         "Select a document section:", 
         options=sections, 
         key="main_nav", 
         index=sections.index(st.session_state.current_section)
     )
-
-    # Store the selected section in session state
     st.session_state.current_section = selected_section
 
-    # Get the section name and table name
+    # Get section and table name
     section, table_name = select_section(selected_section)
 
     # File uploader widget
@@ -96,79 +121,78 @@ def main():
 
     # Store uploaded file name in session state
     for file in files:
-        file_name = file.name
-        st.session_state["file_name"] = file_name
+        st.session_state["file_name"] = file.name
 
-    # Optional input for web links
+    # Web links input
     web_links = st.sidebar.text_area("Enter web links (one per line)", key="web_links")
 
     # Ensure files_processed is in session state
     if "files_processed" not in st.session_state:
         st.session_state["files_processed"] = False
 
-    # Ensure query input always appears
-    search_mode = st.sidebar.selectbox("Select retrieval mode", ["local", "global", "hybrid", "mix"], key="mode_selection")
-    query = st.text_input("Ask a question about the document:", key="query_input")
+    # Sidebar: Retrieval mode selection
+    st.session_state.search_mode = st.sidebar.selectbox("Select retrieval mode", ["local", "global", "hybrid", "mix"], key="mode_selection")
 
-    # Process files and links if they are present and not processed yet
+    # Process files and links if present
     if (files or web_links) and not st.session_state["files_processed"]:
         for file in files:
             file_name = file.name
-            
-            # Check if the file already exists in the database for the selected section
-            if check_if_file_exists_in_section(file_name, section):
-                st.warning(f"The file {file_name} has already been processed in the '{section}' section.")
+
+            # Check if file exists in database or working directory
+            file_in_db = check_if_file_exists_in_section(file_name, section)
+            dir_exists = check_working_directory(file_name, section)
+
+            if file_in_db and dir_exists:
+                placeholder = st.empty()
+                placeholder.warning(f"The file '{file_name}' has already been processed and exists in the '{section}' section.")
+                time.sleep(5)
+                placeholder.empty()
             else:
-                st.session_state["file_name"] = file_name
                 placeholder = st.empty()
                 placeholder.write("🔄 Processing files and links...")
-                time.sleep(5)  # Simulate file processing time
+                time.sleep(5)
                 placeholder.empty()
+
+                # Process the files and links
                 process_files_and_links(files, web_links, section)  
-                st.session_state["files_processed"] = True
+
                 placeholder.write("✅ Files and links processed!")
                 time.sleep(5)  
                 placeholder.empty()
 
-    # Reset processing state
+
+    # Reset processing state and delete working directory
     if st.sidebar.button("Reset Processing", key="reset"):
+        # Clear session state except for initialized state
+        keys_to_keep = {"initialized"}
+        for key in list(st.session_state.keys()):
+            if key not in keys_to_keep:
+                del st.session_state[key]
+
+        # Reset processing flag
         st.session_state["files_processed"] = False
 
-    # Handle the query generation only if files are processed and a query is entered
-    if query and st.button("Generate Answer", key="answer"):
-        with st.spinner("Generating answer..."):
-            try:
-                # working_dir = Path(f"./analysis_workspace/{section}/{file_name.split('.')[0]}")
-                working_dir = Path(f"./analysis_workspace/{section}")
-                working_dir.mkdir(parents=True, exist_ok=True)
-                rag = RAGFactory.create_rag(str(working_dir))  
-                response = rag.query(query, QueryParam(mode=search_mode))
-                st.session_state.chat_history.append(("You", query))
-                st.session_state.chat_history.append(("Bot", response))
-            except Exception as e:
-                st.error(f"Error retrieving response: {e}")
+        # Define the working directory
+        working_dir = Path("./analysis_workspace")
 
-        # Display chat history
-        for role, message in st.session_state.chat_history:
-            with st.chat_message("user" if role == "You" else "assistant"):
-                st.write(message)
+        # Delete the working directory if it exists
+        if working_dir.exists() and working_dir.is_dir():
+            import shutil
+            shutil.rmtree(working_dir)
+            st.sidebar.success("Processing reset! The working directory has been deleted.")
+        else:
+            st.sidebar.warning("No working directory found to delete.")
 
-        # JavaScript to scroll to bottom
-        st.markdown(
-            """
-            <script>
-            window.onload = function() {
-                const chatBox = document.querySelector('div.stChatMessage');
-                if (chatBox) {
-                    chatBox.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }
-            };
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
 
-    # Sidebar: Display uploaded files
+    # Input field with automatic query execution on Enter
+    st.text_input("Ask a question about the document:", key="query_input", on_change=generate_answer)
+
+    # Display chat history
+    for role, message in st.session_state.chat_history:
+        with st.chat_message("user" if role == "You" else "assistant"):
+            st.write(message)
+
+    # Sidebar: Uploaded files display
     st.sidebar.write("### Uploaded Files")
     try:
         conn = sqlite3.connect("files.db", check_same_thread=False)
@@ -194,7 +218,7 @@ def main():
     except Exception as e:
         st.sidebar.error(f"Failed to retrieve files: {e}")
 
-    # Sidebar: Breadcrumb Display
+    # Sidebar: Breadcrumb display
     uploaded_sections = get_uploaded_sections(SECTION_KEYWORDS)
     if "uploaded_sections" not in st.session_state:
         st.session_state.uploaded_sections = set()

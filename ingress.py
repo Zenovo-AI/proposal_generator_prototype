@@ -11,11 +11,13 @@ from document_processor import DocumentProcessor
 process_document = DocumentProcessor()
 
 
-def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = None, section = ""):
+def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = None, section=""):
     from app import RAGFactory
-    # Get the section from session state
-    section = st.session_state.current_section
+    import traceback
     
+    # Get the section from session state
+    section = st.session_state.get("current_section", section)  # Use session state or fallback to provided section
+
     try:
         # Map section to table name
         table_name = next((key for key, value in SECTION_KEYWORDS.items() if value == section), None)
@@ -26,62 +28,69 @@ def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = No
         conn = sqlite3.connect("files.db", check_same_thread=False)
         cursor = conn.cursor()
 
-        # Check if the file or web link already exists
+        # Check if file already exists in the database
         if file_path:
             cursor.execute(f"SELECT file_name FROM {table_name} WHERE file_name = ?", (file_name,))
             if cursor.fetchone():
-                placeholder = st.sidebar.empty()
-                placeholder.write(f"File '{file_name}' already exists in the '{section}' section.")
+                placeholder=st.empty()
+                placeholder.sidebar.warning(f"File '{file_name}' already exists in the '{section}' section.")
                 time.sleep(5)
                 placeholder.empty()
-                
-        elif web_links:
+
+        # Check if web links already exist in the database
+        if web_links:
             for link in web_links:
                 cursor.execute(f"SELECT file_name FROM {table_name} WHERE file_name = ?", (link,))
                 if cursor.fetchone():
-                    placeholder = st.sidebar.empty()
-                    placeholder.write(f"Web link '{link}' already exists in the '{section}' section.")
+                    placeholder=st.empty()
+                    placeholder.sidebar.warning(f"Web link '{link}' already exists in the '{section}' section.")
                     time.sleep(5)
                     placeholder.empty()
 
-        # Process file content
+        # Initialize text content list
         text_content = []
-        # Convert the WindowsPath object to a string
-        file_path_str = str(file_path)
-        if file_path_str:
+
+        # Process file content if file_path is provided
+        if file_path:
+            file_path_str = str(file_path)  # Convert Path object to string
             if file_path_str.endswith(".pdf"):
-                text_content.append(process_document.extract_text_and_tables_from_pdf(file_path_str))
-                print(type(f"Text content is of type: {text_content}"))
+                extracted_text = process_document.extract_text_and_tables_from_pdf(file_path_str)
+                if extracted_text:
+                    text_content.append(extracted_text)
             elif file_path_str.endswith(".txt"):
                 text_content.append(process_document.extract_txt_content(file_path_str))
             else:
                 return {"error": "Unsupported file format."}
 
-        # Process web links
+        # Process web links if provided
         if web_links:
             for link in web_links:
                 web_content = process_document.process_webpage(link)
                 if web_content:
                     text_content.append(web_content)
 
+        # Ensure there is content to process
+        if not text_content:
+            return {"error": "No valid content extracted from file or web links."}
+
         # Insert metadata into the database
         for content in text_content:
-            insert_file_metadata(file_name or link, table_name, content)
-        
-        # Further processing
-        results = []
-        for content in text_content:
-            # Create unique working directory for the file
-            # working_dir = Path(f"./analysis_workspace/{section}/{file_name.split('.')[0]}")
-            working_dir = Path(f"./analysis_workspace/{section}")
-            working_dir.mkdir(parents=True, exist_ok=True)  # ✅ Ensure directory exists using pathlib
-            rag = RAGFactory.create_rag(str(working_dir))  # Convert Path object to string if needed
-            rag.insert(text_content)
+            insert_file_metadata(file_name, table_name, content)
 
-            placeholder = st.empty()
-            placeholder.write(f"File {file_name} has been processed and inserted successfully")
-            time.sleep(5)
-            placeholder.empty()
+        # Create unique working directory for the file
+        working_dir = Path("./analysis_workspace")
+        working_dir.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
+
+        # Process data using RAGFactory
+        rag = RAGFactory.create_rag(str(working_dir))
+        rag.insert(text_content)
+
+        # Show success message
+        placeholder = st.empty()
+        placeholder.success(f"File '{file_name}' processed and inserted successfully!")
+        time.sleep(5)
+        placeholder.empty()
+        return {"success": True}
 
     except Exception as e:
         traceback.print_exc()
@@ -89,3 +98,5 @@ def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = No
 
     finally:
         conn.close()
+
+

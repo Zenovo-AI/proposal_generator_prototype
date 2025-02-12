@@ -24,11 +24,6 @@ class DocumentProcessor:
         "Additional Requirements and Compliance Documents"
     }
 
-    def __init__(self):
-        if "section_embeddings" not in st.session_state:
-            st.session_state.section_embeddings = {}  # Store embeddings for each section
-            
-            
     # Helper function to read text from a TXT file
     def extract_txt_content(self, file_path):
         try:

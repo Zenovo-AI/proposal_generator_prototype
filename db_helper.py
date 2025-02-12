@@ -1,5 +1,5 @@
 import sqlite3
-import streamlit as st
+from pathlib import Path
 from document_processor import DocumentProcessor
 
 # Initialize document processor
@@ -109,3 +109,16 @@ def check_if_file_exists_in_section(file_name, section):
 
     # If a result is found, it means the file already exists, so return True
     return result is not None
+
+
+
+def check_working_directory(file_name, section):
+    """
+    Check if the corresponding working directory exists for the processed file.
+
+    :param file_name: The name of the file to check.
+    :param section: The selected section.
+    :return: True if the working directory exists, False otherwise.
+    """
+    working_dir = Path(f"./analysis_workspace/{section}/{file_name.split('.')[0]}")
+    return working_dir.exists() and working_dir.is_dir()  # Returns True if the directory exists

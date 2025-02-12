@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 import streamlit as st
 from ingress import ingress_file_doc
 
@@ -26,16 +27,18 @@ def process_file(uploaded_file, section, web_links):
 
 
         # Call the function with correct arguments
-        response = ingress_file_doc(file_name, file_path, web_links, section)
-
-        if "error" in response:
-            st.error(f"Error processing file: {response['error']}")
-        else:
-            st.success(f"File '{file_name}' processed successfully!")
+        try:
+            response = ingress_file_doc(file_name, file_path, web_links or [], section)
+            if "error" in response:
+                st.error(f"File processing error: {response['error']}")
+            else:
+                placeholder = st.empty()
+                placeholder.success(f"File '{file_name}' processed successfully!")
+                time.sleep(5)
+                placeholder.empty()
+        except Exception as e:
+            st.error(f"Unexpected error: {e}")
 
     except Exception as e:
         st.error(f"Connection error: {e}")
-        
-        
-        
 

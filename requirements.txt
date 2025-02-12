@@ -29,3 +29,5 @@ networkx
 nano_vectordb
 trafilatura
 pdfplumber
+google-cloud-storage 
+gcsfs
