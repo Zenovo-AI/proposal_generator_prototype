@@ -86,10 +86,7 @@ def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = No
         rag.insert(text_content)
 
         # Show success message
-        placeholder = st.empty()
-        placeholder.success(f"File '{file_name}' processed and inserted successfully!")
-        time.sleep(5)
-        placeholder.empty()
+       st.success(f"File '{file_name}' processed and inserted successfully!")
         return {"success": True}
 
     except Exception as e:
