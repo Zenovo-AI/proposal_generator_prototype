@@ -32,20 +32,14 @@ def ingress_file_doc(file_name: str, file_path: str = None, web_links: list = No
         if file_path:
             cursor.execute(f"SELECT file_name FROM {table_name} WHERE file_name = ?", (file_name,))
             if cursor.fetchone():
-                placeholder=st.empty()
-                placeholder.sidebar.warning(f"File '{file_name}' already exists in the '{section}' section.")
-                time.sleep(5)
-                placeholder.empty()
+                st.sidebar.warning(f"File '{file_name}' already exists in the '{section}' section.")
 
         # Check if web links already exist in the database
         if web_links:
             for link in web_links:
                 cursor.execute(f"SELECT file_name FROM {table_name} WHERE file_name = ?", (link,))
                 if cursor.fetchone():
-                    placeholder=st.empty()
-                    placeholder.sidebar.warning(f"Web link '{link}' already exists in the '{section}' section.")
-                    time.sleep(5)
-                    placeholder.empty()
+                    st.sidebar.warning(f"Web link '{link}' already exists in the '{section}' section.")
 
         # Initialize text content list
         text_content = []
