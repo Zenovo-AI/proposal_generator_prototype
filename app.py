@@ -6,7 +6,8 @@ import time
 import numpy as np
 import streamlit as st
 from lightrag import LightRAG, QueryParam
-from lightrag.llm.openai import openai_embed, gpt_4o_complete, gpt_4o_mini_complete
+from lightrag.llm.openai import openai_embed, gpt_4o_mini_complete, gpt_4o_complete
+from langchain_openai import OpenAI
 from lightrag.utils import EmbeddingFunc
 from constant import SECTION_KEYWORDS, select_section
 from db_helper import check_if_file_exists_in_section, check_working_directory, delete_file, get_uploaded_sections, initialize_database
@@ -61,10 +62,84 @@ class RAGFactory:
             addon_params={
                 "insert_batch_size": 10  # Process 10 documents per batch
             },
-            llm_model_func=gpt_4o_mini_complete,
+            llm_model_func=gpt_4o_complete,
             embedding_func=cls._shared_embedding
         )
 
+
+
+def generate_explicit_query(query):
+    """Expands the user query and merges expanded queries into a single, explicit query."""
+    llm = OpenAI(temperature=0.7)
+
+    prompt = f"""
+    Given the following vague query:
+
+    '{query}'
+
+    Expand this query into **seven structured subqueries** that break down the proposal into detailed components.
+    Ensure that the query includes **specific details** such as:
+    - The sender's company name, address, email, and phone number.
+    - The recipient’s name, position, organization, and address.
+    - A structured breakdown of the proposal, including scope of work, compliance, pricing, experience, and additional documents.
+
+    Example:
+
+    **Original Query:** "Can you write a proposal based on the requirements in the RFQ?"
+
+    **Expanded Queries:**
+    1. "Provide a formal header section with the sender's full company details (name, address, email, phone) and the recipient's details (name, position, organization, address)."
+    2. "Write a professional opening paragraph that introduces the company and states the purpose of the proposal."
+    3. "Describe the scope of work, breaking it into detailed sections for each service category (e.g., borehole rehabilitation and new drilling)."
+    4. "Provide a clear breakdown of pricing, including cost per lot and total project cost, specifying currency and payment terms."
+    5. "Outline a detailed project plan and timeline, including key milestones and deliverables."
+    6. "List all required compliance details, including adherence to RFQ terms, delivery timelines, insurance coverage, and taxation requirements."
+    7. "Outline the company's experience and qualifications, listing past projects, certifications, and key personnel expertise."
+    8. "List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation."
+
+    **Final Explicit Query:**  
+    "Can you write a proposal based on the requirements in the RFQ, including:  
+    (1) A formal header with sender and recipient details,  
+    (2) An introduction stating the company’s expertise and purpose of the proposal,  
+    (3) A detailed scope of work for each service component,  
+    (4) A structured pricing breakdown with currency and payment terms,  
+    (5) A detailed project plan and timeline with milestones, and
+    (6) A section on compliance, including delivery, insurance, and taxation,  
+    (7) A section on experience and qualifications, highlighting past projects and key personnel, and  
+    (8) A section listing all required additional documents."
+
+    Now, generate an explicit query for:
+
+    '{query}'
+    """
+
+    response = llm.invoke(prompt)
+    return response.strip()
+
+
+
+
+# def generate_answer():
+#     """Generates an answer when the user enters a query and presses Enter."""
+#     query = st.session_state.query_input  # Get user query from session state
+#     if not query:
+#         return  # Do nothing if query is empty
+
+#     with st.spinner("Generating answer..."):
+#         try:
+#             working_dir = Path("./analysis_workspace")
+#             working_dir.mkdir(parents=True, exist_ok=True)
+#             rag = RAGFactory.create_rag(str(working_dir))  
+#             response = rag.query(query, QueryParam(mode=st.session_state.search_mode))
+
+#             # Store in chat history
+#             st.session_state.chat_history.append(("You", query))
+#             st.session_state.chat_history.append(("Bot", response))
+#         except Exception as e:
+#             st.error(f"Error retrieving response: {e}")
+
+#     # Reset query input to allow further queries
+#     st.session_state.query_input = ""
 
 
 def generate_answer():
@@ -73,12 +148,17 @@ def generate_answer():
     if not query:
         return  # Do nothing if query is empty
 
+    with st.spinner("Expanding query..."):
+        expanded_queries = generate_explicit_query(query)
+
     with st.spinner("Generating answer..."):
         try:
             working_dir = Path("./analysis_workspace")
             working_dir.mkdir(parents=True, exist_ok=True)
             rag = RAGFactory.create_rag(str(working_dir))  
-            response = rag.query(query, QueryParam(mode=st.session_state.search_mode))
+
+            # Send combined query to RAG
+            response = rag.query(expanded_queries, QueryParam(mode="hybrid"))
 
             # Store in chat history
             st.session_state.chat_history.append(("You", query))
@@ -131,7 +211,7 @@ def main():
         st.session_state["files_processed"] = False
 
     # Sidebar: Retrieval mode selection
-    st.session_state.search_mode = st.sidebar.selectbox("Select retrieval mode", ["local", "global", "hybrid", "mix"], key="mode_selection")
+    # st.session_state.search_mode = st.sidebar.selectbox("Select retrieval mode", ["local", "global", "hybrid", "mix"], key="mode_selection")
 
     # Process files and links if present
     if (files or web_links) and not st.session_state["files_processed"]:
