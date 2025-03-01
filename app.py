@@ -150,6 +150,7 @@ def generate_answer():
 
     with st.spinner("Expanding query..."):
         expanded_queries = generate_explicit_query(query)
+        st.write(expanded_queries)
 
     with st.spinner("Generating answer..."):
         try:
