@@ -70,7 +70,7 @@ class RAGFactory:
 
 def generate_explicit_query(query):
     """Expands the user query and merges expanded queries into a single, explicit query."""
-    llm = OpenAI(temperature=0.7)
+    llm = OpenAI(temperature=0)
 
     prompt = f"""
     Given the following vague query:
