@@ -131,3 +131,18 @@ def create_empty_vectordb():
         "Placeholder content to initialize FAISS."
     ]
     return FAISS.from_texts(texts, embeddings)
+
+def get_folder_id_from_url(url):
+    """Extract folder ID from Google Drive URL or return 'root' for home"""
+    if not url or 'drive.google.com/drive/home' in url:
+        return 'root'  # Special ID for root folder
+    
+    # Handle different URL formats
+    if '/folders/' in url:
+        folder_id = url.split('/folders/')[-1].split('?')[0]
+    elif '/file/' in url:
+        folder_id = url.split('/file/')[0].split('/')[-1]
+    else:
+        folder_id = url.split('/')[-1]
+    
+    return folder_id.strip()
