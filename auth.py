@@ -35,12 +35,13 @@ def init_session():
     if "credentials" not in st.session_state:
         st.session_state["credentials"] = None
         
-auth_cache_dir = Path(__file__).parent / "auth_cache"
-auth_cache_dir.mkdir(exist_ok=True, parents=True)
+auth_cache_dir = Path("./auth_cache")
+auth_cache_dir.mkdir(parents=True, exist_ok=True)
 
 client_secret_path = auth_cache_dir / "client_secret.json"
 auth_status_path = auth_cache_dir / "auth_success.txt"
 credentials_path = auth_cache_dir / "credentials.json"
+
 
 scopes=[
         "https://www.googleapis.com/auth/userinfo.profile",
@@ -284,7 +285,8 @@ def auth_flow():
         return
 
     client_config = json.loads(client_secret_path.read_text())
-    redirect_uri = "https://hospitalpolicies-mwh7xj6f6vuyvnhqwqkob5.streamlit.app"
+    # redirect_uri = "https://hospitalpolicies-mwh7xj6f6vuyvnhqwqkob5.streamlit.app"
+    redirect_uri = "http://localhost:8501"
     
     # After client secret is uploaded
     if client_secret_path.exists():

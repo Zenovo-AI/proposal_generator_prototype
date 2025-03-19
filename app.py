@@ -48,12 +48,21 @@ def initialize_session_state():
         st.session_state.upload_triggered = False
 
 
-auth_cache_dir = Path(__file__).parent / "auth_cache"
-auth_cache_dir.mkdir(exist_ok=True, parents=True)
+auth_cache_dir = Path("./auth_cache")
+auth_cache_dir.mkdir(parents=True, exist_ok=True)
 
 client_secret_path = auth_cache_dir / "client_secret.json"
 auth_status_path = auth_cache_dir / "auth_success.txt"
 credentials_path = auth_cache_dir / "credentials.json"
+
+
+# Initialize API key from secrets
+if "openai_api_key" not in st.session_state:
+    try:
+        st.session_state.openai_api_key = st.secrets["OPENAI_API_KEY"]
+    except KeyError:
+        st.error("OpenAI API key not found in secrets.toml")
+        st.stop()
 
 
 # Helper Function to Clean and Parse JSON
@@ -102,7 +111,7 @@ class RAGFactory:
 
 def generate_explicit_query(query):
     """Expands the user query and merges expanded queries into a single, explicit query."""
-    llm = OpenAI(temperature=0)
+    llm = OpenAI(temperature=0, openai_api_key=st.session_state.openai_api_key)
 
     prompt = f"""
     Given the following vague query:

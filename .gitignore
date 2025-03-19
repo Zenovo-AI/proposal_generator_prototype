@@ -173,6 +173,7 @@ analysis_workspace/
 fastapi_server.py
 ngrok.exe
 client_secret.json
+auth_cache
 
 <<<<<<< HEAD
 data/
