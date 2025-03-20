@@ -312,15 +312,15 @@ def auth_flow():
 
             assert user_info.get("email"), "Email not found in response"
 
-        # Save credentials persistently
-        with open(credentials_path, "w") as f:
-            json.dump({"email": user_info["email"], "given_name": user_info.get("given_name", ""), "token": credentials.to_json()}, f)
+            # Save credentials persistently
+            with open(credentials_path, "w") as f:
+                json.dump({"email": user_info["email"], "given_name": user_info.get("given_name", ""), "token": credentials.to_json()}, f)
 
-        # Create a flag file to mark successful authentication
-        auth_status_path.write_text("Authenticated")
+            # Create a flag file to mark successful authentication
+            auth_status_path.write_text("Authenticated")
 
-        # Store in session state to avoid redundant API calls
-        st.session_state["credentials"] = {"email": user_info["email"], "token": credentials.to_json()}
+            # Store in session state to avoid redundant API calls
+            st.session_state["credentials"] = {"email": user_info["email"], "token": credentials.to_json()}
 
             st.sidebar.success(f"Login Successful! Welcome, {user_info['email']}")
             return flow.credentials
