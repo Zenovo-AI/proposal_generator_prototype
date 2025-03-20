@@ -48,14 +48,6 @@ def initialize_session_state():
         st.session_state.upload_triggered = False
 
 
-auth_cache_dir = Path("./auth_cache")
-auth_cache_dir.mkdir(parents=True, exist_ok=True)
-
-client_secret_path = auth_cache_dir / "client_secret.json"
-auth_status_path = auth_cache_dir / "auth_success.txt"
-credentials_path = auth_cache_dir / "credentials.json"
-
-
 # Initialize API key from secrets
 if "openai_api_key" not in st.session_state:
     try:
@@ -377,7 +369,10 @@ def main():
                     file_name=f"{st.session_state.pdf_file_name}.pdf"
                 )
 
-            st.success(f"✅ Upload Successful! [View File]({file_link})")
+            placeholder = st.empty()
+            placeholder.success(f"✅ Upload Successful! [View File]({file_link})")
+            time.sleep(20)
+            placeholder.empty()
 
             # **Clear form values from session state after successful upload**
             keys_to_clear = ["google_drive_link", "client_name", "pdf_file_name", "show_gdrive_form"]
@@ -387,6 +382,7 @@ def main():
             # Collapse the form
             st.session_state.show_gdocs_form = False
             st.rerun()
+            
 
         except Exception as e:
             st.error(f"Upload failed: {str(e)}")
