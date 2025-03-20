@@ -1,13 +1,9 @@
 import json
 from pathlib import Path
-import tempfile
-from time import sleep
-from google.auth.transport.requests import Request
 import streamlit as st
 from googleapiclient.discovery import build
 from streamlit_js import st_js, st_js_blocking
 from google_auth_oauthlib.flow import Flow
-from google.oauth2.credentials import Credentials
 
 
 # Function to retrieve data from local storage
@@ -316,18 +312,15 @@ def auth_flow():
 
             assert user_info.get("email"), "Email not found in response"
 
-            # Save credentials as a dictionary, but ensure token is stored as a dict
-            credentials_data = {
-                "email": user_info["email"],
-                "given_name": user_info.get("given_name", ""),
-                "token": json.loads(credentials.to_json()),  # Parse the token into a dict
-            }
-            with open(credentials_path, "w") as f:
-                json.dump(credentials_data, f)
+        # Save credentials persistently
+        with open(credentials_path, "w") as f:
+            json.dump({"email": user_info["email"], "given_name": user_info.get("given_name", ""), "token": credentials.to_json()}, f)
 
-            auth_status_path.write_text("Authenticated")
-            st.session_state["credentials"] = credentials_data
-            st.session_state["auth_code"] = auth_code  # Prevent reusing auth_code
+        # Create a flag file to mark successful authentication
+        auth_status_path.write_text("Authenticated")
+
+        # Store in session state to avoid redundant API calls
+        st.session_state["credentials"] = {"email": user_info["email"], "token": credentials.to_json()}
 
             st.sidebar.success(f"Login Successful! Welcome, {user_info['email']}")
             return flow.credentials
@@ -402,9 +395,9 @@ def validate_session():
     if any(key in st.session_state for key in required_keys):
         if not auth_status_path.exists():
             logout()
-
-
-# st.title("Google OAuth")
+            
+            
+st.title("Google OAuth")
 
 # # --- Upload Client Secret JSON ---
 # client_config = st.sidebar.file_uploader("Upload your client secret JSON file", type=["json"])
