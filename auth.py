@@ -1,13 +1,10 @@
 import json
 from pathlib import Path
-import tempfile
-from time import sleep
-from google.auth.transport.requests import Request
+import base64
 import streamlit as st
 from googleapiclient.discovery import build
 from streamlit_js import st_js, st_js_blocking
 from google_auth_oauthlib.flow import Flow
-from google.oauth2.credentials import Credentials
 
 
 # Function to retrieve data from local storage
@@ -43,14 +40,132 @@ auth_status_path = auth_cache_dir / "auth_success.txt"
 credentials_path = auth_cache_dir / "credentials.json"
 
 
-scopes=[
-        "https://www.googleapis.com/auth/userinfo.profile",
-        "https://www.googleapis.com/auth/userinfo.email",
-        "openid",
-        "https://www.googleapis.com/auth/documents",
-        "https://www.googleapis.com/auth/drive.file"
-    ]
+scopes = [
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/documents",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "openid"
+]
 
+
+# def auth_flow():
+#     st.sidebar.title("Authentication")
+    
+#     # Initialize with absolute paths
+#     auth_cache_dir = Path(__file__).parent / "auth_cache"
+#     auth_cache_dir.mkdir(parents=True, exist_ok=True)
+    
+#     client_secret_path = auth_cache_dir / "client_secret.json"
+#     credentials_path = auth_cache_dir / "credentials.json"
+#     auth_status_path = auth_cache_dir / "auth_success.txt"
+
+#     # 1. Check existing authentication first
+#     if auth_status_path.exists() and credentials_path.exists():
+#         try:
+#             with open(credentials_path, "r") as f:
+#                 credentials_json = json.load(f)
+#                 st.write(credentials_json)
+
+#                 # Ensure that the "token" field is a dictionary, not a string
+#                 if not isinstance(credentials_json.get("token"), dict):
+#                     raise ValueError("Invalid token format in stored credentials.")
+
+#             st.session_state.credentials = credentials_json
+#             st.sidebar.success("Great! You're successfully logged in. Enjoy your session!")
+#             return credentials_json
+
+#         except json.JSONDecodeError:
+#             st.error("Error: Invalid JSON format in credentials file.")
+#             logout()
+#         except Exception as e:
+#             st.error(f"Invalid credentials: {str(e)}")
+#             logout()
+
+
+#     # 2. File upload handling with atomic write
+#     if "client_secret_uploaded" not in st.session_state:
+#         st.session_state.client_secret_uploaded = False
+
+#     if not st.session_state.client_secret_uploaded:
+#         uploaded_file = st.sidebar.file_uploader(
+#             "Upload Client Secret JSON",
+#             type=["json"],
+#             key="client_secret_upload"
+#         )
+        
+#         if uploaded_file:
+#             # Atomic write pattern
+#             temp_path = client_secret_path.with_suffix(".tmp")
+#             try:
+#                 # Write to temporary file first
+#                 with open(temp_path, "wb") as f:
+#                     f.write(uploaded_file.getvalue())
+                
+#                 # Atomic rename
+#                 temp_path.rename(client_secret_path)
+#                 st.session_state.client_secret_uploaded = True
+#                 st.rerun()
+                
+#             except Exception as e:
+#                 st.error(f"Failed to save file: {str(e)}")
+#                 return
+
+#     # 3. Verify file persistence
+#     if not client_secret_path.exists():
+#         st.warning("Please upload client secret file")
+#         st.stop()
+
+#     client_config = json.loads(client_secret_path.read_text())
+#     redirect_uri = "http://localhost:8501"
+    
+#     flow = Flow.from_client_config(
+#         client_config,
+#         scopes=scopes,
+#         redirect_uri=redirect_uri,
+#     )
+
+#     # Step 4: Handle OAuth Authentication
+#     auth_code = st.query_params.get("code")
+
+#     if auth_code:
+#         flow = Flow.from_client_config(
+#             client_config,
+#             scopes=scopes,
+#             redirect_uri=redirect_uri,
+#         )
+
+#         # Fetch token using the auth code
+#         flow.fetch_token(code=auth_code)
+#         credentials = flow.credentials
+#         user_info_service = build("oauth2", "v2", credentials=credentials)
+#         user_info = user_info_service.userinfo().get().execute()
+
+#         assert user_info.get("email"), "Email not found in response"
+
+#         # Save credentials persistently
+#         with open(credentials_path, "w") as f:
+#             json.dump({"email": user_info["email"], "given_name": user_info.get("given_name", ""), "token": credentials.to_json()}, f)
+
+#         # Create a flag file to mark successful authentication
+#         auth_status_path.write_text("Authenticated")
+
+#         # Store in session state to avoid redundant API calls
+#         st.session_state["credentials"] = {"email": user_info["email"], "token": credentials.to_json()}
+
+#         st.sidebar.success("✅ You’ve successfully logged in! Welcome aboard!")
+#         st.write("Hey there! Welcome back! Let’s generate some proposals together. 🚀")
+#         return True
+
+#     else:
+#         authorization_url, state = flow.authorization_url(
+#             access_type="offline",
+#             prompt="consent",
+#             include_granted_scopes="true",
+#         )
+#         st.link_button("Sign in with Google", authorization_url)
+#         return False
 
 def auth_flow():
     st.sidebar.title("Authentication")
@@ -59,112 +174,78 @@ def auth_flow():
     auth_cache_dir = Path(__file__).parent / "auth_cache"
     auth_cache_dir.mkdir(parents=True, exist_ok=True)
     
-    client_secret_path = auth_cache_dir / "client_secret.json"
     credentials_path = auth_cache_dir / "credentials.json"
     auth_status_path = auth_cache_dir / "auth_success.txt"
 
-    # Debug: Show actual paths
-    st.sidebar.write(f"Auth cache location: {auth_cache_dir.resolve()}")
-
-    # 1. Check existing authentication first
-    if auth_status_path.exists() and credentials_path.exists():
+    if credentials_path.exists() and auth_status_path.exists():
         try:
             with open(credentials_path, "r") as f:
-                credentials = json.load(f)
-            st.session_state.credentials = credentials
-            st.sidebar.success(f"Authenticated as {credentials['email']}")
-            return credentials
-        except Exception as e:
-            st.error(f"Invalid credentials: {str(e)}")
+                credentials_json = json.load(f)
+
+            # # Ensure token is properly parsed
+            # if isinstance(credentials_json.get("token"), str):
+            #     credentials_json["token"] = json.loads(credentials_json["token"])
+            
+            # ✅ Ensure token is properly parsed (convert from string to dictionary)
+            if isinstance(credentials_json.get("token"), str):
+                try:
+                    credentials_json["token"] = json.loads(credentials_json["token"])
+                except json.JSONDecodeError:
+                    st.error("Invalid token format in credentials.")
+                    logout()
+                    return None
+
+            # Store credentials in session state (optional)
+            st.session_state.credentials = credentials_json
+
+            st.sidebar.success("Great! You're successfully logged in. Enjoy your session!")
+            return credentials_json
+
+        except (json.JSONDecodeError, ValueError) as e:
+            st.error(f"Error loading credentials: {e}")
             logout()
-
-    # 2. File upload handling with atomic write
-    if "client_secret_uploaded" not in st.session_state:
-        st.session_state.client_secret_uploaded = False
-
-    if not st.session_state.client_secret_uploaded:
-        uploaded_file = st.sidebar.file_uploader(
-            "Upload Client Secret JSON",
-            type=["json"],
-            key="client_secret_upload"
-        )
-        
-        if uploaded_file:
-            # Atomic write pattern
-            temp_path = client_secret_path.with_suffix(".tmp")
-            try:
-                # Write to temporary file first
-                with open(temp_path, "wb") as f:
-                    f.write(uploaded_file.getvalue())
-                
-                # Atomic rename
-                temp_path.rename(client_secret_path)
-                st.session_state.client_secret_uploaded = True
-                st.rerun()
-                
-            except Exception as e:
-                st.error(f"Failed to save file: {str(e)}")
-                return
-
-    # 3. Verify file persistence
-    if not client_secret_path.exists():
-        st.warning("Please upload client secret file")
+            return None 
+           
+    try:
+        client_secret_b64 = st.secrets.google_auth.client_secret_b64
+        client_config = json.loads(base64.b64decode(client_secret_b64).decode())
+    except Exception as e:
+        st.error(f"🔒 Configuration error: {str(e)}")
         st.stop()
-
-    client_config = json.loads(client_secret_path.read_text())
-
+        
+    # Handle OAuth Authentication
     redirect_uri = "https://hospitalpolicies-mwh7xj6f6vuyvnhqwqkob5.streamlit.app"
     
-    flow = Flow.from_client_config(
-        client_config,
-        scopes=scopes,
-        redirect_uri=redirect_uri,
-    )
-
-    # Step 4: Handle OAuth Authentication
+    flow = Flow.from_client_config(client_config, scopes=scopes, redirect_uri=redirect_uri)
     auth_code = st.query_params.get("code")
 
     if auth_code:
-        flow = Flow.from_client_config(
-            client_config,
-            scopes=scopes,
-            redirect_uri=redirect_uri,
-        )
-
-        # Fetch token using the auth code
         flow.fetch_token(code=auth_code)
         credentials = flow.credentials
+
         user_info_service = build("oauth2", "v2", credentials=credentials)
         user_info = user_info_service.userinfo().get().execute()
 
         assert user_info.get("email"), "Email not found in response"
 
-        # ✅ Save credentials persistently
+        # Save credentials persistently
         with open(credentials_path, "w") as f:
-            json.dump({"email": user_info["email"], "given_name": user_info.get("given_name", ""), "token": credentials.to_json()}, f)
+            json.dump({"email": user_info["email"], "token": credentials.to_json()}, f)
 
-        # ✅ Create a flag file to mark successful authentication
+        # Mark authentication as successful
         auth_status_path.write_text("Authenticated")
 
-        # ✅ Store in session state to avoid redundant API calls
+        # Store credentials in session state
         st.session_state["credentials"] = {"email": user_info["email"], "token": credentials.to_json()}
 
-        st.sidebar.success(f"Login Successful! Welcome, {user_info['email']}")
-        st.write(f"Hello {user_info['given_name']}, welcome back to the Proposal Generator APP!")
-        # Display user profile picture if available
-        if "picture" in user_info:
-            st.sidebar.image(user_info["picture"], caption=user_info["name"], width=100)
-        return True
+        st.sidebar.success("✅ You’ve successfully logged in! Welcome aboard!")
+        st.write("Hey there! Welcome back! Let’s generate some proposals together. 🚀")
+        return None
 
     else:
-        authorization_url, state = flow.authorization_url(
-            access_type="offline",
-            prompt="consent",
-            include_granted_scopes="true",
-        )
+        authorization_url, state = flow.authorization_url(access_type="offline", prompt="consent")
         st.link_button("Sign in with Google", authorization_url)
-        return False
-
+        return None
 
 def logout():
     """Completely clears all authentication artifacts"""

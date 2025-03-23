@@ -1,7 +1,7 @@
 import json
-from googleapiclient.discovery import build, Resource
+from googleapiclient.discovery import Resource
 from format_document import extract_relevant_content
-from google.oauth2.credentials import Credentials
+from googleapiclient.errors import HttpError
 import re
 import markdown2
 
@@ -22,15 +22,134 @@ class GoogleDocsHelper:
         """
         document = self.service.documents().create(body={"title": title}).execute()
         return document.get("documentId")
+    
+    # def write_to_document(self, doc_id, content):
+    #     """Handles document structure and indexes properly"""
+    #     requests = []
+        
+    #     # Get initial document state with structural awareness
+    #     doc = self.service.documents().get(documentId=doc_id).execute()
+    #     current_index = self._get_true_start_index(doc)
+
+    #     for line in content.split('\n'):
+    #         line = line.strip()
+    #         if not line:
+    #             continue
+
+    #         # Handle document growth dynamically
+    #         current_index = self._process_line(line, current_index, requests)
+
+    #         # Execute in smaller batches with structural refresh
+    #         if len(requests) >= 5:
+    #             self._execute_with_structure_refresh(doc_id, requests)
+    #             doc = self.service.documents().get(documentId=doc_id).execute()
+    #             current_index = self._get_true_start_index(doc)
+
+    #     self._execute_with_structure_refresh(doc_id, requests)
+
+    # def _get_true_start_index(self, doc):
+    #     """Calculates the safe insertion point considering doc structure"""
+    #     if not doc['body']['content']:
+    #         # New document has implicit paragraph element
+    #         return 1  # Start at beginning of first paragraph
+            
+    #     last_element = doc['body']['content'][-1]
+    #     if 'paragraph' in last_element:
+    #         return last_element['endIndex'] - 1  # Insert before paragraph end
+    #     return last_element['endIndex']
+
+    # def _process_line(self, line, index, requests):
+    #     """Returns new current index after processing line"""
+    #     if line.startswith('### '):
+    #         return self._handle_heading(line, index, requests, 'HEADING_3')
+    #     elif line.startswith('## '):
+    #         return self._handle_heading(line, index, requests, 'HEADING_2')
+    #     elif '|' in line:
+    #         return self._handle_table(line, index, requests)
+    #     else:
+    #         return self._handle_text(line, index, requests)
+
+    # def _handle_heading(self, line, index, requests, style):
+    #     """Handles headings with proper structural spacing"""
+    #     text = line[4:] if style == 'HEADING_3' else line[3:]
+    #     requests.extend([
+    #         {
+    #             'insertText': {
+    #                 'location': {'index': index},
+    #                 'text': text + '\n'
+    #             }
+    #         },
+    #         {
+    #             'updateParagraphStyle': {
+    #                 'range': {
+    #                     'startIndex': index,
+    #                     'endIndex': index + len(text) + 1
+    #                 },
+    #                 'paragraphStyle': {'namedStyleType': style},
+    #                 'fields': 'namedStyleType'
+    #             }
+    #         }
+    #     ])
+    #     return index + len(text) + 2  # Text + newline + structural offset
+
+    # def _handle_table(self, line, index, requests):
+    #     """Handles tables with proper cell indexing"""
+    #     cells = [c.strip() for c in line.split('|')[1:-1]]
+        
+    #     # Table structure takes 2 indexes
+    #     requests.append({
+    #         'insertTable': {
+    #             'rows': 1,
+    #             'columns': len(cells),
+    #             'location': {'index': index}
+    #         }
+    #     })
+        
+    #     # Cells are offset by table structure
+    #     for i, cell in enumerate(cells):
+    #         requests.append({
+    #             'insertText': {
+    #                 'location': {'index': index + 2 + i},
+    #                 'text': cell
+    #             }
+    #         })
+            
+    #     return index + 3 + (len(cells) * 2)  # Table end index
+
+    # def _handle_text(self, line, index, requests):
+    #     """Handles regular text insertion"""
+    #     requests.append({
+    #         'insertText': {
+    #             'location': {'index': index},
+    #             'text': line + '\n'
+    #         }
+    #     })
+    #     return index + len(line) + 1  # Text + newline
+
+    # def _execute_with_structure_refresh(self, doc_id, requests):
+    #     """Executes requests and clears list"""
+    #     if not requests:
+    #         return
+
+    #     try:
+    #         self.service.documents().batchUpdate(
+    #             documentId=doc_id,
+    #             body={'requests': requests}
+    #         ).execute()
+    #     except HttpError as e:
+    #         print(f"Failed batch: {json.dumps(requests, indent=2)}")
+    #         raise
+    #     finally:
+    #         requests.clear()
 
     def write_to_document(self, doc_id, content):
         """
         Writes formatted Markdown content to a Google Doc.
         """
-        relevant_content = extract_relevant_content(content)
+        # relevant_content = extract_relevant_content(content)
         
         # Convert markdown to HTML
-        html_content = markdown2.markdown(relevant_content, extras=["tables"])
+        html_content = markdown2.markdown(content, extras=["tables"])
 
         # Requests list to batch update Google Docs
         requests = []
