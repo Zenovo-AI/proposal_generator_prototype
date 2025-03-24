@@ -262,9 +262,14 @@ Now, generate a **full proposal** using the structured format above, ensuring pr
 #     st.session_state.query_input = ""
 
 
+@st.cache_resource
+def get_db_connection():
+    return sqlite3.connect("files.db", check_same_thread=False)
+
 def generate_answer():
     """Generates an answer when the user enters a query and presses Enter."""
-    query = st.session_state.query_input  # Get user query from session state
+    query = st.session_state.query_input
+    conn = get_db_connection()  # Get user query from session state
     if not query:
         return  # Do nothing if query is empty
 

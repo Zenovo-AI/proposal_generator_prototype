@@ -4,10 +4,14 @@ import streamlit as st
 from ingress import ingress_file_doc
 
 
+from concurrent.futures import ThreadPoolExecutor
+
 def process_files_and_links(files, web_links, section):
     with st.spinner("Processing..."):
-        for uploaded_file in files:
-            process_file(uploaded_file, section, web_links)  # ✅ Call function directly
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = [executor.submit(process_file, file, section, web_links) for file in files]
+            for future in futures:
+                future.result()  # ✅ Call function directly
     st.session_state["files_processed"] = True
 
 def process_file(uploaded_file, section, web_links):

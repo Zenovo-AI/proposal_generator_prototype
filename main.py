@@ -131,6 +131,13 @@ def safe_api_call(call_func, retries=5, delay=1):
     raise RuntimeError("Exceeded maximum retries for API call.")
         
 
+@st.cache_resource(ttl=3600)
+def initialize_rag(working_dir):
+    return GraphRAG(
+        working_dir=working_dir,
+        domain="Analyze the content to extract key entities, their relationships, and relevant insights."
+    )
+
 def process_all_files_in_section(section):
     """
     Process all files in the given section by extracting text, creating embeddings,
