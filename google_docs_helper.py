@@ -46,8 +46,45 @@ class GoogleDocsHelper:
         """
         Writes structured content to Google Docs, handling headings, bold text, bullet points, and tables.
         """
-        self.clear_document(doc_id)  # 🔥 Ensure document is empty before writing
-        index = 1  # Always start at index 1
+        self.clear_document(doc_id)
+        index = 1
+
+        # Add header with company logo and address
+        requests = [{
+            "insertTable": {
+                "rows": 1,
+                "columns": 2,
+                "location": {"index": index}
+            }
+        }]
+        
+        # Company logo cell
+        requests.append({
+            "insertText": {
+                "location": {"index": index + 1},
+                "text": "CDGA"  # Replace with actual logo insertion when available
+            }
+        })
+        
+        # Company address cell (right-aligned)
+        address_text = "3012 €o Business Park, Little Island,\nCork, T45 V220\nwww.cdga.ie\ninfo@cdga.ie"
+        requests.append({
+            "insertText": {
+                "location": {"index": index + 2},
+                "text": address_text
+            }
+        })
+        
+        # Right align address
+        requests.append({
+            "updateParagraphStyle": {
+                "range": {"startIndex": index + 2, "endIndex": index + 2 + len(address_text)},
+                "paragraphStyle": {"alignment": "END"},
+                "fields": "alignment"
+            }
+        })
+        
+        index += len(address_text) + 4  # Adjust index after header
         html_content = markdown2.markdown(content, extras=["tables", "fenced-code-blocks"])
         requests = []
 
@@ -78,7 +115,19 @@ class GoogleDocsHelper:
             # **Bullet Points**
             elif line.startswith("•") or line.startswith("- "):
                 text = re.sub(r"<[^>]+>", "", line)
-                requests.append({"insertText": {"location": {"index": index}, "text": f"• {text}\n"}})
+                requests.extend([
+                    {"insertText": {"location": {"index": index}, "text": f"• {text}\n"}},
+                    {"updateParagraphStyle": {
+                        "range": {"startIndex": index, "endIndex": index + len(text) + 2},
+                        "paragraphStyle": {
+                            "indentStart": {"magnitude": 36, "unit": "PT"},
+                            "spacingMode": "NEVER_COLLAPSE",
+                            "spaceAbove": {"magnitude": 6, "unit": "PT"},
+                            "spaceBelow": {"magnitude": 6, "unit": "PT"}
+                        },
+                        "fields": "indentStart,spacingMode,spaceAbove,spaceBelow"
+                    }}
+                ])
                 index += len(text) + 2
 
             # **Bold Text**
