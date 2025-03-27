@@ -706,67 +706,7 @@ def main():
     #         st.error(f"Upload failed: {str(e)}")
     #         st.error(traceback.format_exc())
     
-    # if st.sidebar.button("📝 Save to Google Docs"):
-    #     if "drive_service" in st.session_state:
-    #         del st.session_state.drive_service
-    #     credentials_data = auth_flow()
-    #     try:
-    #         # Authentication flow
-    #         if not credentials_data or "token" not in credentials_data:
-    #             st.stop()
 
-    #         # Service initialization
-    #         creds = Credentials.from_authorized_user_info(credentials_data['token'])
-    #         docs_service = build("docs", "v1", credentials=creds)
-    #         drive_service = build("drive", "v3", credentials=creds)
-            
-    #         # Initial validation
-    #         if not st.session_state.get("proposal_text"):
-    #             placeholder = st.empty()
-    #             placeholder.error("❗ Generate a proposal before uploading!")
-    #             time.sleep(5)
-    #             placeholder.empty()
-    #             st.rerun()
-
-    #         # Folder structure creation
-    #         with st.spinner("Creating folder structure..."):
-    #             # Get the root folder ID
-    #             root_folder = drive_service.files().get(fileId='root', fields='id').execute()
-    #             root_folder_id = root_folder['id']
-    #             proposals_folder_id = GoogleDriveAPI(drive_service).create_folder(
-    #                 "Proposals", 
-    #                 parent_folder_id=root_folder_id
-    #             )
-    #             date_folder_id = GoogleDriveAPI(drive_service).create_folder(
-    #                 datetime.now().strftime("%Y-%m-%d"),
-    #                 parent_folder_id=proposals_folder_id
-    #             )
-
-    #         # Document creation and content writing
-    #         with st.spinner("Creating document..."):
-    #             doc_helper = GoogleDocsHelper(docs_service)
-    #             doc_id = doc_helper.create_document(
-    #                 f"Proposal_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    #             )
-    #             doc_helper.write_to_document(doc_id, st.session_state.proposal_text)
-
-    #         # Move document to target folder
-    #         with st.spinner("Finalizing upload..."):
-    #             drive_service.files().update(
-    #                 fileId=doc_id,
-    #                 addParents=date_folder_id,
-    #                 removeParents='root',
-    #                 fields='id, parents'
-    #             ).execute()
-
-    #         # Success feedback
-    #         st.success(f"✅ Document saved! [View in Google Docs](https://docs.google.com/document/d/{doc_id}/)")
-    #         time.sleep(5)  # Show success message briefly
-    #         st.rerun()
-
-    #     except Exception as e:
-    #         st.error(f"Upload failed: {str(e)}")
-    #         st.error(traceback.format_exc())
     
     if st.sidebar.button("📝 Save Proposal to Google Drive"):
         if "drive_service" in st.session_state:
@@ -822,9 +762,7 @@ def main():
                 removeParents='root'
             ).execute()
 
-            # ✅ Generate and display the Google Docs view link
-            # view_link = docs_helper.generate_view_link(new_google_doc_id)
-            # if view_link:
+            
             st.success(f"✅ Upload Successful! [View Document](https://docs.google.com/document/d/{new_google_doc_id}/view)")
             time.sleep(10)
 
