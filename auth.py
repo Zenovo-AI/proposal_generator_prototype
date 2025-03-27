@@ -214,7 +214,7 @@ def auth_flow():
         st.stop()
         
     # Handle OAuth Authentication
-    redirect_uri = "https://hospitalpolicies-mwh7xj6f6vuyvnhqwqkob5.streamlit.app"
+    redirect_uri = "http://localhost:8502"
     
     flow = Flow.from_client_config(client_config, scopes=scopes, redirect_uri=redirect_uri)
     auth_code = st.query_params.get("code")
