@@ -409,6 +409,55 @@ def parse_proposal_content(proposal_text):
     return parsed_data
 
 
+# def sync_gcs_to_local(gcs_fs, gcs_bucket, gcs_prefix):
+#     """Sync GCS directory to local 'analysis_workspace' only if needed"""
+#     local_cache = Path("./analysis_workspace")  # Fixed typo in 'analysis_workspace'
+#     gcs_path = f"{gcs_bucket}/{gcs_prefix}"
+
+#     # Ensure the local directory exists
+#     local_cache.mkdir(parents=True, exist_ok=True)
+
+#     # ✅ Check if GCS path exists
+#     try:
+#         gcs_files = gcs_fs.ls(gcs_path)
+#         if not gcs_files:
+#             raise FileNotFoundError(f"GCS path '{gcs_path}' does not contain any files")
+#     except Exception as e:
+#         raise FileNotFoundError(f"Error accessing GCS path '{gcs_path}': {e}")
+
+#     # ✅ Download missing/outdated files
+#     for blob_path in gcs_files:
+#         if blob_path.endswith(("/", "")):  # Skip directories
+#             continue
+
+#         local_path = local_cache / Path(blob_path).name
+#         print(f"Processing: {blob_path} -> {local_path}")
+
+#         try:
+#             # Get GCS file's last modified time
+#             blob_info = gcs_fs.info(blob_path)
+#             gcs_last_modified = datetime.fromtimestamp(blob_info["updated"], tz=timezone.utc)
+
+#             # Check if the local file exists and is up-to-date
+#             if local_path.exists():
+#                 local_last_modified = datetime.fromtimestamp(local_path.stat().st_mtime, tz=timezone.utc)
+#                 if local_last_modified >= gcs_last_modified:
+#                     print(f"Skipping (up-to-date): {blob_path}")
+#                     continue  # ✅ Skip download if file is up-to-date
+
+#             # ✅ Download the latest file
+#             with gcs_fs.open(blob_path, "rb") as remote_file:
+#                 content = remote_file.read()
+#                 local_path.write_bytes(content)
+#                 print(f"Downloaded: {local_path} ({len(content)} bytes)")
+#                 time.sleep(2)
+
+#         except Exception as e:
+#             print(f"Error downloading {blob_path}: {e}")
+
+#     return local_cache
+
+
 def sync_gcs_to_local(gcs_fs, gcs_bucket, gcs_prefix):
     """Ensure all files from GCS are downloaded to 'analysis_workspace'"""
     local_cache = Path("./analysis_workspace")
@@ -487,6 +536,7 @@ def sync_gcs_to_local(gcs_fs, gcs_bucket, gcs_prefix):
         print("\n⚠️ Some files are missing! Check logs.\n")
 
     return local_cache
+
 
 
 # Authenticate with GCS
