@@ -486,6 +486,15 @@ def get_gcs_fs():
 
 
 def main():
+    # Check authentication
+    credentials_exist = credentials_path.exists() and auth_status_path.exists()
+
+    if not credentials_exist:
+        credentials = auth_flow()  # Run authentication flow
+        if not credentials:
+            st.error("Please Authenticate, so you can use the App!...")
+            return  # Stop execution if authentication fails
+
     st.title("Proposal and Chatbot System")
     st.write("Upload a document and ask questions based on structured knowledge retrieval.")
     
@@ -575,23 +584,31 @@ def main():
             import shutil
             shutil.rmtree(working_dir)
             st.sidebar.success("Processing reset! The working directory has been deleted.")
+            st.rerun()
         else:
             st.sidebar.warning("No working directory found to delete.")
-
     
 
     
     if st.sidebar.button("📝 Save Proposal to Google Drive"):
         if "drive_service" in st.session_state:
             del st.session_state.drive_service
-        credentials_data = auth_flow()
 
         try:
-            if not credentials_data or "token" not in credentials_data:
+            credentials = json.loads(credentials_path.read_text())  # Load main JSON
+
+            # Decode the nested JSON inside "token"
+            if isinstance(credentials.get("token"), str):
+                credentials["token"] = json.loads(credentials["token"])
+
+            # Ensure the required keys exist
+            required_keys = {"client_id", "client_secret", "refresh_token"}
+            if not isinstance(credentials["token"], dict) or not required_keys.issubset(credentials["token"].keys()):
+                st.error("❗ Invalid credentials file. Please log in again.")
                 st.stop()
 
             # ✅ Initialize services
-            creds = Credentials.from_authorized_user_info(credentials_data['token'])
+            creds = Credentials.from_authorized_user_info(credentials['token'])
             docs_service = build("docs", "v1", credentials=creds)
             drive_service = build("drive", "v3", credentials=creds)
             drive_api = GoogleDriveAPI(drive_service)
@@ -639,8 +656,6 @@ def main():
             st.success(f"✅ Upload Successful! [View Document](https://docs.google.com/document/d/{new_google_doc_id}/view)")
             time.sleep(10)
 
-            # else:
-            #     st.error("❗ Failed to generate a view link.")
             st.rerun()
 
         except Exception as e:
