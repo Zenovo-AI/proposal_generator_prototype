@@ -1,15 +1,15 @@
+import base64
 import json
 import logging
 from pathlib import Path
 from datetime import datetime, timezone
 import re
 import sqlite3
-import base64
-import time
-import traceback
-import numpy as np 
 import gcsfs
 from google.oauth2 import service_account
+import time
+import traceback
+import numpy as np
 import streamlit as st
 from lightrag import LightRAG, QueryParam
 from lightrag.llm.openai import openai_embed, gpt_4o_mini_complete, gpt_4o_complete
@@ -23,6 +23,13 @@ from inference import process_files_and_links
 from google_docs_helper import GoogleDocsHelper, GoogleDriveAPI
 from auth import auth_flow, logout, validate_session
 from utils import clean_text
+
+auth_cache_dir = Path(__file__).parent / "auth_cache"
+
+credentials_path = auth_cache_dir / "credentials.json"
+auth_status_path = auth_cache_dir / "auth_success.txt"
+    
+    
 
 def initialize_session_state():
     if "chat_history" not in st.session_state:
@@ -132,7 +139,7 @@ def generate_explicit_query(query):
     5. "Outline a detailed project plan and timeline, including key milestones and deliverables."
     6. "List all required compliance details, including adherence to RFQ terms, delivery timelines, insurance coverage, and taxation requirements."
     7. "Outline the company's experience and qualifications, listing past projects, certifications, and key personnel expertise."
-    8. "List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation."
+    8. "List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation, etc."
 
     **Final Explicit Query:**  
     "Can you write a proposal based on the requirements in the RFQ, including:  
@@ -164,11 +171,15 @@ You are an expert proposal assistant. Generate a comprehensive proposal using ON
 2. Structure the proposal with clear section titles, separated by newlines.
 3. NO placeholders like [Company Name]; use real data from the knowledge base or note it as missing if not found.
 4. Use a professional tone.
+5. SKIP COMPLIMENTARY CLOSINGS OR VALEDICTIONS
+6. SKIP SALUTATION
 
 ---Proposal Structure---
-LETTERHEAD & INTRODUCTION  
+LETTERHEAD &  
 - Display brand name, reg/vat numbers, and contact info  
-- Greet the recipient briefly and outline purpose  
+
+INTRODUCTION 
+- Greet the recipient briefly and outline purpose
 
 PROJECT SCOPE  
 - Detailed scope from the knowledge base  
@@ -183,11 +194,23 @@ COMMERCIAL
 - Provide cost breakdown and payment terms in a tabular form  
 
 SCHEDULE  
-- Timeline or milestone details  
+- Timeline or milestone details 
 
-CONCLUSION & SIGN-OFF  
-- Summarize key points  
-- Provide sign-off lines referencing Directors or authorized persons  
+COMPLIANCE SECTION
+- List all required compliance details, including adherence to RFQ terms, delivery timelines, insurance coverage, and taxation requirements.
+
+
+EXPERIENCE & QUALIFICATIONS
+- Outline the company's experience and qualifications, listing past projects, certifications, and key personnel expertise.
+
+ADDITIONAL DOCUMENTS REQUIRED 
+- List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation, etc.
+
+CONCLUSION
+- Summarize key points   
+
+Yours Sincerely,
+- Provide sign-off lines referencing Directors or authorized persons.
 
 Current RFQ Requirements: {query}
 """
@@ -327,7 +350,7 @@ def extract_section(proposal_text, section_name):
     subsection_pattern = re.compile(r'^\s*(LOT \d+:|•|\d+\.)\s*', re.IGNORECASE)
     
     # Define section names that mark the end of the current section
-    end_sections = ['Exclusions', 'Deliverables', 'Commercial', 'Schedule', 'Conclusion']
+    end_sections = ['Project Scope', 'Exclusions', 'Deliverables', 'Commercial', 'Schedule', 'Compliance Section', 'Experience & Qualifications', 'Additional Documents Required', 'Conclusion', 'Yours Sincerely']
     # Build regex pattern to match any of these sections at line start
     end_pattern = re.compile(
         r'^\s*({})\b.*'.format(  # \b ensures whole word match
@@ -364,11 +387,17 @@ def extract_section(proposal_text, section_name):
 def parse_proposal_content(proposal_text):
     """Extracts proposal sections with proper placeholder keys"""
     parsed_data = {
+        "INTRODUCTION_CONTENT": extract_section(proposal_text, "Introduction"),
         "PROJECT_SCOPE_CONTENT": extract_section(proposal_text, "Project Scope"),
         "EXCLUSIONS_CONTENT": extract_section(proposal_text, "Exclusions"),
         "DELIVERABLES_CONTENT": extract_section(proposal_text, "Deliverables"),
         "COMMERCIAL_CONTENT": extract_section(proposal_text, "Commercial"),
         "SCHEDULE_CONTENT": extract_section(proposal_text, "Schedule"),
+        "COMPLIANCE_CONTENT": extract_section(proposal_text, "Compliance Section"),
+        "EXPERIENCE_CONTENT": extract_section(proposal_text, "Experience & Qualifications"),
+        "ADDITIONAL_DOCUMENTS_CONTENT": extract_section(proposal_text, "Additional Documents Required"),
+        "CONCLUSION_CONTENT": extract_section(proposal_text, "Conclusion"),
+        "SIGN_OFF_CONTENT": extract_section(proposal_text, "Yours Sincerely,")    
     }
 
     # 🔍 DEBUG: Log extracted content before sending it for replacement
@@ -378,7 +407,6 @@ def parse_proposal_content(proposal_text):
     print("--- 🔍 End of Parsed Content ---\n")
 
     return parsed_data
-
 
 
 def sync_gcs_to_local(gcs_fs, gcs_bucket, gcs_prefix):
