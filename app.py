@@ -7,8 +7,11 @@ import re
 import sqlite3
 import gcsfs
 from google.oauth2 import service_account
+import gcsfs
+from google.oauth2 import service_account
 import time
 import traceback
+import numpy as np
 import numpy as np
 import streamlit as st
 from lightrag import LightRAG, QueryParam
@@ -23,6 +26,13 @@ from inference import process_files_and_links
 from google_docs_helper import GoogleDocsHelper, GoogleDriveAPI
 from auth import auth_flow, logout, validate_session
 from utils import clean_text
+
+auth_cache_dir = Path(__file__).parent / "auth_cache"
+
+credentials_path = auth_cache_dir / "credentials.json"
+auth_status_path = auth_cache_dir / "auth_success.txt"
+    
+    
 
 auth_cache_dir = Path(__file__).parent / "auth_cache"
 
@@ -140,6 +150,7 @@ def generate_explicit_query(query):
     6. "List all required compliance details, including adherence to RFQ terms, delivery timelines, insurance coverage, and taxation requirements."
     7. "Outline the company's experience and qualifications, listing past projects, certifications, and key personnel expertise."
     8. "List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation, etc."
+    8. "List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation, etc."
 
     **Final Explicit Query:**  
     "Can you write a proposal based on the requirements in the RFQ, including:  
@@ -171,12 +182,16 @@ You are an expert proposal assistant. Generate a comprehensive proposal using ON
 2. Structure the proposal with clear section titles, separated by newlines.
 3. NO placeholders like [Company Name]; use real data from the knowledge base or note it as missing if not found.
 4. Use a professional tone.
-5. SKIP COMPLIMENTARY CLOSINGS OR VALEDICTIONS
+5. SKIP COMPLIMENTARY CLOSINGS OR VALEDICTIONS6.
 6. SKIP SALUTATION
 
 ---Proposal Structure---
 LETTERHEAD &  
+LETTERHEAD &  
 - Display brand name, reg/vat numbers, and contact info  
+
+INTRODUCTION 
+- Greet the recipient briefly and outline purpose
 
 INTRODUCTION 
 - Greet the recipient briefly and outline purpose
@@ -195,7 +210,23 @@ COMMERCIAL
 
 SCHEDULE  
 - Timeline or milestone details 
+- Timeline or milestone details 
 
+COMPLIANCE SECTION
+- List all required compliance details, including adherence to RFQ terms, delivery timelines, insurance coverage, and taxation requirements.
+
+
+EXPERIENCE & QUALIFICATIONS
+- Outline the company's experience and qualifications, listing past projects, certifications, and key personnel expertise.
+
+ADDITIONAL DOCUMENTS REQUIRED 
+- List all necessary additional documents, such as bidder’s statement, vendor profile form, and statement of confirmation, etc.
+
+CONCLUSION
+- Summarize key points   
+
+Yours Sincerely,
+- Provide sign-off lines referencing Directors or authorized persons.
 COMPLIANCE SECTION
 - List all required compliance details, including adherence to RFQ terms, delivery timelines, insurance coverage, and taxation requirements.
 
@@ -298,7 +329,9 @@ def get_db_connection():
 
 def generate_answer():
     """Generates an answer when the user enters a query and presses Enter."""
+    """Generates an answer when the user enters a query and presses Enter."""
     query = st.session_state.query_input
+    conn = get_db_connection()  # Get user query from session state
     conn = get_db_connection()  # Get user query from session state
     if not query:
         return  # Do nothing if query is empty
@@ -325,8 +358,10 @@ def generate_answer():
             rag = RAGFactory.create_rag(str(local_dir))
 
             # Send combined query to RAG
+            # Send combined query to RAG
             response = rag.query(full_prompt, QueryParam(mode="hybrid"))
 
+            # Store in chat history
             # Store in chat history
             st.session_state.chat_history.append(("You", query))
             st.session_state.chat_history.append(("Bot", response))
@@ -335,9 +370,17 @@ def generate_answer():
             cleaned_response = clean_text(response)
             st.session_state.proposal_text = cleaned_response
             
+            
+            # Store response as proposal text
+            cleaned_response = clean_text(response)
+            st.session_state.proposal_text = cleaned_response
+            
         except Exception as e:
             st.error(f"Error retrieving response: {e}")
+            st.error(f"Error retrieving response: {e}")
 
+    # Reset query input to allow further queries
+    st.session_state.query_input = ""
     # Reset query input to allow further queries
     st.session_state.query_input = ""
 
@@ -350,6 +393,7 @@ def extract_section(proposal_text, section_name):
     subsection_pattern = re.compile(r'^\s*(LOT \d+:|•|\d+\.)\s*', re.IGNORECASE)
     
     # Define section names that mark the end of the current section
+    end_sections = ['Project Scope', 'Exclusions', 'Deliverables', 'Commercial', 'Schedule', 'Compliance Section', 'Experience & Qualifications', 'Additional Documents Required', 'Conclusion', 'Yours Sincerely']
     end_sections = ['Project Scope', 'Exclusions', 'Deliverables', 'Commercial', 'Schedule', 'Compliance Section', 'Experience & Qualifications', 'Additional Documents Required', 'Conclusion', 'Yours Sincerely']
     # Build regex pattern to match any of these sections at line start
     end_pattern = re.compile(
@@ -388,6 +432,7 @@ def parse_proposal_content(proposal_text):
     """Extracts proposal sections with proper placeholder keys"""
     parsed_data = {
         "INTRODUCTION_CONTENT": extract_section(proposal_text, "Introduction"),
+        "INTRODUCTION_CONTENT": extract_section(proposal_text, "Introduction"),
         "PROJECT_SCOPE_CONTENT": extract_section(proposal_text, "Project Scope"),
         "EXCLUSIONS_CONTENT": extract_section(proposal_text, "Exclusions"),
         "DELIVERABLES_CONTENT": extract_section(proposal_text, "Deliverables"),
@@ -397,7 +442,8 @@ def parse_proposal_content(proposal_text):
         "EXPERIENCE_CONTENT": extract_section(proposal_text, "Experience & Qualifications"),
         "ADDITIONAL_DOCUMENTS_CONTENT": extract_section(proposal_text, "Additional Documents Required"),
         "CONCLUSION_CONTENT": extract_section(proposal_text, "Conclusion"),
-        "SIGN_OFF_CONTENT": extract_section(proposal_text, "Yours Sincerely,")    
+        "SIGN_OFF_CONTENT": extract_section(proposal_text, "Yours Sincerely,")
+        
     }
 
     # 🔍 DEBUG: Log extracted content before sending it for replacement
@@ -407,55 +453,6 @@ def parse_proposal_content(proposal_text):
     print("--- 🔍 End of Parsed Content ---\n")
 
     return parsed_data
-
-
-# def sync_gcs_to_local(gcs_fs, gcs_bucket, gcs_prefix):
-#     """Sync GCS directory to local 'analysis_workspace' only if needed"""
-#     local_cache = Path("./analysis_workspace")  # Fixed typo in 'analysis_workspace'
-#     gcs_path = f"{gcs_bucket}/{gcs_prefix}"
-
-#     # Ensure the local directory exists
-#     local_cache.mkdir(parents=True, exist_ok=True)
-
-#     # ✅ Check if GCS path exists
-#     try:
-#         gcs_files = gcs_fs.ls(gcs_path)
-#         if not gcs_files:
-#             raise FileNotFoundError(f"GCS path '{gcs_path}' does not contain any files")
-#     except Exception as e:
-#         raise FileNotFoundError(f"Error accessing GCS path '{gcs_path}': {e}")
-
-#     # ✅ Download missing/outdated files
-#     for blob_path in gcs_files:
-#         if blob_path.endswith(("/", "")):  # Skip directories
-#             continue
-
-#         local_path = local_cache / Path(blob_path).name
-#         print(f"Processing: {blob_path} -> {local_path}")
-
-#         try:
-#             # Get GCS file's last modified time
-#             blob_info = gcs_fs.info(blob_path)
-#             gcs_last_modified = datetime.fromtimestamp(blob_info["updated"], tz=timezone.utc)
-
-#             # Check if the local file exists and is up-to-date
-#             if local_path.exists():
-#                 local_last_modified = datetime.fromtimestamp(local_path.stat().st_mtime, tz=timezone.utc)
-#                 if local_last_modified >= gcs_last_modified:
-#                     print(f"Skipping (up-to-date): {blob_path}")
-#                     continue  # ✅ Skip download if file is up-to-date
-
-#             # ✅ Download the latest file
-#             with gcs_fs.open(blob_path, "rb") as remote_file:
-#                 content = remote_file.read()
-#                 local_path.write_bytes(content)
-#                 print(f"Downloaded: {local_path} ({len(content)} bytes)")
-#                 time.sleep(2)
-
-#         except Exception as e:
-#             print(f"Error downloading {blob_path}: {e}")
-
-#     return local_cache
 
 
 def sync_gcs_to_local(gcs_fs, gcs_bucket, gcs_prefix):
