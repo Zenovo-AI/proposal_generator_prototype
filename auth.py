@@ -214,7 +214,7 @@ def auth_flow():
         st.stop()
         
     # Handle OAuth Authentication
-    redirect_uri = "http://localhost:8502"
+    redirect_uri = "https://hospitalpolicies-mwh7xj6f6vuyvnhqwqkob5.streamlit.app"
     
     flow = Flow.from_client_config(client_config, scopes=scopes, redirect_uri=redirect_uri)
     auth_code = st.query_params.get("code")
@@ -240,6 +240,9 @@ def auth_flow():
 
         st.sidebar.success("✅ You’ve successfully logged in! Welcome aboard!")
         st.write("Hey there! Welcome back! Let’s generate some proposals together. 🚀")
+        # Clear auth code from URL and refresh
+        st.query_params.clear()
+        st.rerun()
         return None
 
     else:

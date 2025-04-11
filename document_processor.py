@@ -34,7 +34,6 @@ class DocumentProcessor:
     
     
 
-    @st.cache_data(ttl=3600)  # Cache for 1 hour
     def extract_text_and_tables_from_pdf(self, file):
         text = ""
         table_texts = []
