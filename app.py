@@ -650,6 +650,8 @@ def main():
             # ✅ Retrieve the Google Docs template
             template_name = "ProposalTemplate"
             template_id = drive_api.get_template_id(template_name)
+            if not template_id:
+                raise ValueError(f"Error: Proposal template '{template_name}' not found in drive. Please verify the template exists.")
 
             # ✅ Organize Google Drive folders
             with st.spinner("Organizing Google Drive..."):
@@ -681,10 +683,10 @@ def main():
             ).execute()
 
             
-            st.success(f"✅ Upload Successful! [View Document](https://docs.google.com/document/d/{new_google_doc_id}/view)")
-            time.sleep(10)
+            st.sidebar(f"✅ Upload Successful! [View Document](https://docs.google.com/document/d/{new_google_doc_id}/view)")
+            # time.sleep(10)
 
-            st.rerun()
+            # st.rerun()
 
         except Exception as e:
             st.error(f"🚨 Document creation failed: {str(e)}")
