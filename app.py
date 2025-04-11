@@ -266,32 +266,6 @@ Now, generate a **full proposal** using the structured format above, ensuring pr
 """
 
 
-
-
-
-# def generate_answer():
-#     """Generates an answer when the user enters a query and presses Enter."""
-#     query = st.session_state.query_input  # Get user query from session state
-#     if not query:
-#         return  # Do nothing if query is empty
-
-#     with st.spinner("Generating answer..."):
-#         try:
-#             working_dir = Path("./analysis_workspace")
-#             working_dir.mkdir(parents=True, exist_ok=True)
-#             rag = RAGFactory.create_rag(str(working_dir))  
-#             response = rag.query(query, QueryParam(mode="hybrid"))
-
-#             # Store in chat history
-#             st.session_state.chat_history.append(("You", query))
-#             st.session_state.chat_history.append(("Bot", response))
-#         except Exception as e:
-#             st.error(f"Error retrieving response: {e}")
-
-#     # Reset query input to allow further queries
-#     st.session_state.query_input = ""
-
-
 @st.cache_resource
 def get_db_connection():
     return sqlite3.connect("files.db", check_same_thread=False)
